@@ -345,6 +345,13 @@ const FOODS = [
   ["Boiled egg (with crushed shell)","yes"],["Plain cooked chicken","yes"],["Plain cooked shrimp","yes"],["Plain cooked fish","yes"],
   ["Cuttlebone","yes"],["Oyster shell (crushed)","yes"],["Unsalted nuts","yes"],["Plain oats","yes"],["Dried oak or magnolia leaves","yes"],
   ["Bee pollen","yes"],["Unsweetened coconut flakes","yes"],["Hibiscus flowers","yes"],["Dried mealworms","yes"],
+  ["Pear (no seeds)","yes"],["Cantaloupe","yes"],["Honeydew","yes"],["Raspberries","yes"],["Blackberries","yes"],["Cherries (no pits)","yes"],
+  ["Peach (no pit)","yes"],["Plum (no pit)","yes"],["Kiwi","yes"],["Pumpkin","yes"],["Squash","yes"],["Cucumber","yes"],
+  ["Romaine lettuce","yes"],["Green beans","yes"],["Beets","yes"],["Cauliflower","yes"],["Dandelion leaves","yes"],["Rose petals (no pesticides)","yes"],
+  ["Plain cooked salmon","yes"],["Krill (dried)","yes"],["Freeze-dried bloodworms","yes"],["Brine shrimp","yes"],["Unseasoned seaweed","yes"],
+  ["Unsalted sunflower seeds","yes"],["Unsalted pumpkin seeds","yes"],["Unsalted almonds","yes"],["Crushed eggshell","yes"],
+  ["Pineapple","some"],["Plain popcorn (no salt/butter)","some"],
+  ["Hot dogs / ham / bacon","no"],["Canned food with salt","no"],["Fish flakes with preservatives","no"],["Soda / juice","no"],
   ["Plain rice (cooked)","some"],["Plain pasta","some"],["Cheese","some"],["Peanut butter (no salt/sugar)","some"],["Honey","some"],
   ["Onion","no"],["Garlic","no"],["Chives / leeks","no"],["Salted or seasoned food","no"],["Chips / crackers","no"],
   ["Anything with preservatives","no"],["Food with ethoxyquin","no"],["Food with copper sulfate","no"],["Candy / chocolate","no"],
@@ -722,7 +729,7 @@ function renderFood(){
   const q = $("foodSearch").value.trim().toLowerCase();
   const items = FOODS.filter(f => !q || f[0].toLowerCase().includes(q));
   $("foodList").innerHTML = items.map(f => `<div class="food"><span>${esc(f[0])}</span><span class="tag ${f[1] === "no" ? "bad" : f[1] === "some" ? "s" : ""}">${FOOD_TXT[f[1]]}</span></div>`).join("")
-    || `<p class="muted small">Not on the list. Rule of thumb: plain, unseasoned, no preservatives. Or ask the expert.</p>`;
+    || `<p class="muted small">Not on the list yet. If you're not sure, skip it. Safe food is plain, with no salt, seasoning, sugar, or preservatives.</p>`;
   $("feedList").innerHTML = state.feedings.slice(-6).reverse().map(f => `<li class="row between"><span>${esc(f.food)}</span><span class="muted small">${fmtTime(f.t)}</span></li>`).join("");
   const week = state.feedings.filter(f => Date.now() - f.t < 7 * 86400000);
   const n = new Set(week.map(f => f.food.toLowerCase().trim())).size;
