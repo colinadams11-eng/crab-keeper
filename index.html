@@ -47,9 +47,16 @@ p{margin:0 0 8px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
 /* player HUD */
-.hud{background:var(--panel);border:2px solid var(--gold);border-radius:6px;padding:14px;margin-bottom:14px;box-shadow:0 0 0 4px rgba(255,200,61,.08)}
+.hud{background:var(--panel);border:2px solid var(--tier,var(--gold));border-radius:6px;padding:14px;margin-bottom:14px;box-shadow:0 0 0 4px color-mix(in srgb,var(--tier,#FFC83D) 15%,transparent)}
+.hud.legend{animation:glow 3s ease-in-out infinite}
+@keyframes glow{50%{box-shadow:0 0 18px 2px color-mix(in srgb,var(--tier) 45%,transparent)}}
+.tierpill{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:3px;border:2px solid var(--tier);color:var(--tier);margin-left:6px;vertical-align:middle}
+.ranks{list-style:none;margin:0;padding:0;max-height:360px;overflow-y:auto}
+.ranks li{display:flex;justify-content:space-between;gap:10px;padding:8px 4px;border-bottom:1px dashed var(--line)}
+.ranks li.now{background:var(--panel-2);border-radius:4px;font-weight:700}
+.ranks li.locked{color:var(--muted);opacity:.6}
 .hud .lv{font-size:26px;color:var(--gold);line-height:1}
-.hud .title{font-weight:700;font-size:20px}
+.hud .title{font-weight:700;font-size:20px;color:var(--tier,var(--text))}
 .xpbar{height:16px;background:var(--panel-2);border:2px solid var(--line);border-radius:3px;margin-top:10px;overflow:hidden}
 .xpbar i{display:block;height:100%;background:repeating-linear-gradient(90deg,var(--gold) 0 10px,#E5A800 10px 12px);transition:width .5s}
 .hudstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;text-align:center}
@@ -146,6 +153,23 @@ summary{cursor:pointer;font-weight:700;color:var(--muted);padding:4px 0}
 .trophy span{font-size:13px;color:var(--muted)}
 .trophy .xp{font-size:9px;color:var(--gold);margin-top:6px;display:block}
 
+/* rarity + milestones */
+.trophy{border-color:var(--rc,var(--line))}
+.trophy .rar{font-size:11px;font-weight:700;color:var(--rc,var(--muted));display:block;margin-top:2px}
+.trophy.got{border-color:var(--rc,var(--gold))}
+.trophy.secret b{letter-spacing:.1em}
+.ms{margin-top:12px;background:var(--panel-2);border-radius:5px;padding:10px 12px}
+.ms .meter{height:10px;margin-top:6px}
+.badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.badge{font-size:12px;font-weight:700;padding:2px 7px;border-radius:3px;border:2px solid var(--line);color:var(--muted)}
+.badge.on{border-color:var(--gold);color:var(--gold)}
+.challenge{border-color:var(--cyan)}
+.challenge.done{border-color:var(--good)}
+.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.statgrid div{background:var(--panel-2);border-radius:4px;padding:10px}
+.statgrid b{display:block;font-size:22px}.statgrid span{font-size:13px;color:var(--muted)}
+.party{border:2px solid var(--gold);background:rgba(255,200,61,.1);border-radius:5px;padding:12px 13px;margin-bottom:10px}
+.party b{display:block;color:var(--gold)}
 /* ask */
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .chip{border:2px solid var(--line);background:var(--panel-2);border-radius:3px;padding:5px 10px;font-size:14px}
@@ -181,6 +205,7 @@ nav.tabs button[aria-selected="true"]{color:var(--gold)}
 <!-- QUESTS -->
 <section id="tab-quests" hidden>
   <div id="alerts"></div>
+  <div class="panel challenge" id="challenge"></div>
   <div class="panel">
     <div class="row between"><h3 style="margin:0">Daily quests</h3><span class="muted small" id="dailyCount"></span></div>
     <p class="muted small" style="margin:4px 0 10px">Clear all 5 for a +25 XP perfect-day bonus. Resets at midnight.</p>
@@ -279,6 +304,15 @@ nav.tabs button[aria-selected="true"]{color:var(--gold)}
   <p class="muted" id="trophyCount"></p>
   <div class="trophies" id="trophies"></div>
   <div class="panel" style="margin-top:12px">
+    <h3>Rank ladder</h3>
+    <p class="muted small" style="margin:0 0 8px">A new title every level. Each one stays a mystery until you unlock it.</p>
+    <ul class="ranks" id="ranks"></ul>
+  </div>
+  <div class="panel">
+    <h3>Your records</h3>
+    <div class="statgrid" id="records"></div>
+  </div>
+  <div class="panel">
     <h3>How to earn XP</h3>
     <ul class="list small">
       <li class="row between"><span>Each daily quest</span><span class="px" style="font-size:10px;color:var(--gold)">10</span></li>
@@ -288,6 +322,12 @@ nav.tabs button[aria-selected="true"]{color:var(--gold)}
       <li class="row between"><span>Photo (up to 3 a day)</span><span class="px" style="font-size:10px;color:var(--gold)">15</span></li>
       <li class="row between"><span>Shell change logged</span><span class="px" style="font-size:10px;color:var(--gold)">20</span></li>
       <li class="row between"><span>Crab finishes a molt</span><span class="px" style="font-size:10px;color:var(--gold)">75</span></li>
+      <li class="row between"><span>Daily challenge</span><span class="px" style="font-size:10px;color:var(--gold)">30</span></li>
+      <li class="row between"><span>1 month with a crab</span><span class="px" style="font-size:10px;color:var(--gold)">100</span></li>
+      <li class="row between"><span>1 year with a crab</span><span class="px" style="font-size:10px;color:var(--gold)">1,000</span></li>
+      <li class="row between"><span>4 years with a crab</span><span class="px" style="font-size:10px;color:var(--gold)">3,000</span></li>
+      <li class="row between"><span>10 years with a crab</span><span class="px" style="font-size:10px;color:var(--gold)">10,000</span></li>
+      <li class="row between"><span>20 years with a crab</span><span class="px" style="font-size:10px;color:var(--gold)">25,000</span></li>
     </ul>
   </div>
 </section>
@@ -298,7 +338,7 @@ nav.tabs button[aria-selected="true"]{color:var(--gold)}
 <nav class="tabs" role="tablist" aria-label="Sections"><div class="in" id="tabs"></div></nav>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="levelup" id="levelup" role="dialog" aria-modal="true" aria-labelledby="luTitle">
-  <div class="card"><div class="l1 px" id="luTitle">Level up</div><div class="l2 px" id="luLevel">2</div><div id="luName" style="font-size:20px;font-weight:700"></div>
+  <div class="card"><div class="l1 px" id="luTitle">Level up</div><div class="l2 px" id="luLevel">2</div><div class="muted small" style="color:#9E93C2">New title unlocked</div><div id="luName" style="font-size:22px;font-weight:700;margin-top:4px"></div><div id="luTier" class="small" style="margin-top:6px"></div>
   <button class="btn gold" id="luClose" style="margin-top:18px;width:100%">Keep going</button></div>
 </div>
 <div class="viewer" id="viewer" hidden>
@@ -337,7 +377,29 @@ const WEEKLY = [
 ];
 const TRAITS = ["Shy","Bold","Digger","Climber","Night owl","Foodie","Explorer","Chill","Pinchy","Speedy"];
 const SKILLS = [["speed","Speed"],["pinch","Pinch"],["dig","Dig"],["climb","Climb"],["brave","Bravery"]];
-const TITLES = ["Beach rookie","Sand digger","Shell scout","Tide keeper","Reef ranger","Crab whisperer","Coconut commander","Molt master","Island boss","Legendary keeper"];
+// a new title every level from 1 to 50, then big prestige titles after that
+const TITLES = [
+  "Sand Noob","Beach Rookie","Pebble Picker","Tide Pool Scout","Shell Seeker","Sand Digger","Coconut Cracker","Wave Rider","Mist Master","Pincher Pro",
+  "Reef Ranger","Shell Scout Elite","Salt Water Sage","Tide Tamer","Crab Whisperer","Burrow Boss","Molt Mentor","Coral Commander","Lagoon Legend","Shell Shogun",
+  "Tsunami Tamer","Hurricane Handler","Deep Sea Captain","Pincer Paladin","Island Overlord","Exoskeleton Expert","Crustacean Knight","Coastal Warlord","Shell Sorcerer","Tidal Titan",
+  "Reef Emperor","Abyss Walker","Kraken Tamer","Storm Crab General","Sandstorm Sovereign","Shell Samurai","Pearl Guardian","Ocean Oracle","Crab Grandmaster","Leviathan Slayer",
+  "Titan of Tides","Poseidon's Pal","Galactic Crab Lord","Mythic Molt King","Legendary Pincher","Cosmic Crustacean","Immortal Keeper","Crab Deity","Ultimate Shell Master","Crab God"];
+const PRESTIGE = [[60,"Beyond Crab God"],[70,"Eternal Crab Emperor"],[80,"Omega Keeper"],[90,"The One Who Molts"],[99,"Supreme Overlord of All Crabs"]];
+function titleFor(L){
+  if (L <= 50) return TITLES[L - 1];
+  let t = TITLES[49]; PRESTIGE.forEach(([lv, n]) => { if (L >= lv) t = n; }); return t;
+}
+// rank tiers: [min level, name, color]
+const TIERS = [[1,"Bronze","#D08A4E"],[10,"Silver","#C9CDE0"],[20,"Gold","#FFC83D"],[30,"Diamond","#4CC9F0"],[40,"Mythic","#B57BFF"],[50,"Legendary","#FF5A6E"]];
+const tierFor = L => TIERS.filter(t => L >= t[0]).pop();
+function nextTitle(L){
+  if (L < 50) return [L + 1, TITLES[L]];
+  const p = PRESTIGE.find(([lv]) => lv > L); return p ? p : null;
+}
+// time-together milestones: [days, label, XP] (counted per crab)
+const MILESTONES = [[7,"1 week",50],[30,"1 month",100],[100,"100 days",250],[182,"6 months",300],[365,"1 year",1000],[730,"2 years",1500],[1095,"3 years",2000],
+  [1461,"4 years",3000],[1826,"5 years",4000],[2557,"7 years",6000],[3652,"10 years",10000],[5479,"15 years",15000],[7305,"20 years",25000]];
+const AGES = [["","Not sure"],["0.5","Under 1 year"],["1","About 1 year"],["2","About 2 years"],["3","About 3 years"],["4","About 4 years"],["5","About 5 years"],["7","7+ years"],["10","10+ years"]];
 const FOODS = [
   ["Mango","yes"],["Banana","yes"],["Apple (no seeds)","yes"],["Coconut","yes"],["Strawberries","yes"],["Blueberries","yes"],
   ["Papaya","yes"],["Grapes","yes"],["Watermelon","yes"],["Carrot","yes"],["Sweet potato (cooked)","yes"],["Spinach","yes"],
@@ -361,7 +423,7 @@ const FOOD_TXT = {yes:"Good", some:"Sometimes", no:"Avoid"};
 
 /* ---------- state ---------- */
 function newCrab(name, shell, color){
-  return {id:uid(), name, shell, color, since:dayKey(), molting:false, moltStart:null, molts:[], shells:[], traits:[], skills:{speed:5,pinch:5,dig:5,climb:5,brave:5}, notes:""};
+  return {id:uid(), name, shell, color, since:dayKey(), created:Date.now(), ageAtGet:"", molting:false, moltStart:null, molts:[], shells:[], traits:[], skills:{speed:5,pinch:5,dig:5,climb:5,brave:5}, notes:""};
 }
 function defaultState(){
   return {
@@ -375,6 +437,7 @@ function defaultState(){
 function normCrab(c){
   const d = newCrab(c.name || "Crab", c.shell || "", c.color || "#9B6BFF");
   return Object.assign(d, c, {
+    created: Number(c.created) || Date.now(),
     molts: Array.isArray(c.molts) ? c.molts : [], shells: Array.isArray(c.shells) ? c.shells : [],
     traits: Array.isArray(c.traits) ? c.traits : [], skills: Object.assign({speed:5,pinch:5,dig:5,climb:5,brave:5}, c.skills || {})
   });
@@ -418,9 +481,9 @@ let assets = null, saveTimer = null, prevLevel = null;
 
 function save(){
   state.updated = Date.now();
-  if (state.readings.length > 400) state.readings = state.readings.slice(-400);
-  if (state.feedings.length > 300) state.feedings = state.feedings.slice(-300);
-  if (state.weeklyLog.length > 300) state.weeklyLog = state.weeklyLog.slice(-300);
+  if (state.readings.length > 20000) state.readings = state.readings.slice(-20000);
+  if (state.feedings.length > 20000) state.feedings = state.feedings.slice(-20000);
+  if (state.weeklyLog.length > 10000) state.weeklyLog = state.weeklyLog.slice(-10000);
   try { localStorage.setItem(LS, JSON.stringify(state)); } catch(e){}
   clearTimeout(saveTimer); saveTimer = setTimeout(pushCloud, 700);
   render();
@@ -447,56 +510,140 @@ function perDayCapped(list, getDay, cap, each){
   list.forEach(x => { const k = getDay(x); count[k] = (count[k] || 0) + 1; if (count[k] <= cap) xp += each; });
   return xp;
 }
-function baseXP(){
-  let xp = 0;
-  Object.keys(state.checks).forEach(k => { const c = state.checks[k] || {}; xp += DAILY.filter(t => c[t.id]).length * 10; if (dayDone(k)) xp += 25; });
-  xp += state.weeklyLog.length * 20;
-  xp += perDayCapped(state.readings, r => dayKey(r.t), 3, 10);
-  xp += perDayCapped(state.feedings, f => dayKey(f.t), 3, 10);
-  xp += perDayCapped(state.photos, p => p.day, 3, 15);
-  state.crabs.forEach(c => { xp += c.shells.length * 20 + c.molts.length * 75; });
-  return xp;
-}
 const need = L => 100 + 40 * (L - 1); // XP to go from level L to L+1
 function levelInfo(xp){
   let L = 1, rem = xp;
   while (rem >= need(L) && L < 99) { rem -= need(L); L++; }
-  return {level:L, into:rem, next:need(L), title:TITLES[Math.min(TITLES.length - 1, Math.floor((L - 1) / 2))]};
+  return {level:L, into:rem, next:need(L), title:titleFor(L)};
 }
 function inRangeRun(){
   let best = 0, run = 0;
   state.readings.forEach(r => { run = tempOk(r.temp) && humOk(r.hum) ? run + 1 : 0; best = Math.max(best, run); });
   return best;
 }
-function trophyList(){
-  const foods = new Set(state.feedings.map(f => f.food.toLowerCase().trim())).size;
-  const anyTask = Object.values(state.checks).some(c => c && Object.values(c).some(Boolean));
-  const bs = bestStreak();
-  const swaps = state.crabs.reduce((a, c) => a + c.shells.length, 0);
-  const molts = state.crabs.reduce((a, c) => a + c.molts.length, 0);
-  const list = [
-    ["first","🥇","First quest","Finish any care task",25, anyTask],
-    ["perfect","⭐","Perfect day","Clear all 5 daily quests",25, Object.keys(state.checks).some(dayDone)],
-    ["s3","🔥","On a roll","3-day streak",50, bs >= 3],
-    ["s7","⚡","Week warrior","7-day streak",100, bs >= 7],
-    ["s30","👑","Crab legend","30-day streak",300, bs >= 30],
-    ["side","🧽","Deep clean","Finish a side quest",25, state.weeklyLog.length > 0],
-    ["r10","🌡️","Weather station","Log 10 readings",50, state.readings.length >= 10],
-    ["dial","🎯","Dialed in","5 perfect readings in a row",75, inRangeRun() >= 5],
-    ["chef","🍳","Chef","Serve 5 different meals",50, foods >= 5],
-    ["buffet","🍱","Buffet boss","Serve 15 different meals",100, foods >= 15],
-    ["swap","🐚","New digs","Log a shell change",50, swaps > 0],
-    ["molt","🦀","Fresh armor","A crab finishes a molt",100, molts > 0],
-    ["pic","📸","Paparazzi","Add a photo",25, state.photos.length > 0],
-    ["pic10","🖼️","Photo album","Add 10 photos",75, state.photos.length >= 10]
-  ];
-  const earned = list.filter(t => t[5]).reduce((a, t) => a + t[4], 0);
-  const lvl = levelInfo(baseXP() + earned).level;
-  list.push(["l5","🎮","Level 5","Reach keeper level 5",100, lvl >= 5]);
-  list.push(["l10","💎","Level 10","Reach keeper level 10",200, lvl >= 10]);
-  return list;
+/* crab age + milestones */
+const minSince = c => dayKey(new Date((Number(c.created) || Date.now()) - 60 * 86400000));
+const togetherDays = c => Math.max(0, daysSince(c.since));
+function nextMilestone(c){ const d = togetherDays(c); return MILESTONES.find(m => m[0] > d) || null; }
+function milestoneXP(c){ const d = togetherDays(c); return MILESTONES.filter(m => d >= m[0]).reduce((a, m) => a + m[2], 0); }
+function estAge(c){ if (c.ageAtGet === "" || c.ageAtGet == null) return null; return Number(c.ageAtGet) + togetherDays(c) / 365.25; }
+function fmtYears(y){ if (y < 1) return Math.max(1, Math.round(y * 12)) + " months"; return (Math.round(y * 10) / 10) + " years"; }
+
+/* daily challenge: one per day, picked by date */
+const CALCIUM = /cuttle|egg ?shell|eggshell|oyster|calcium|shell/i;
+const readingsOn = k => state.readings.filter(r => dayKey(r.t) === k);
+const feedsOn = k => state.feedings.filter(f => dayKey(f.t) === k);
+const CHALLENGES = [
+  {id:"two", icon:"🌡️", label:"Log 2 readings today", test:k => readingsOn(k).length >= 2},
+  {id:"newfood", icon:"🥭", label:"Serve a food you haven't served in the last week", test:k => {
+    const recent = new Set(state.feedings.filter(f => { const d = daysBetween(noon(dayKey(f.t)), noon(k)); return d >= 1 && d <= 7; }).map(f => f.food.toLowerCase().trim()));
+    return feedsOn(k).some(f => !recent.has(f.food.toLowerCase().trim())); }},
+  {id:"photo", icon:"📸", label:"Snap a photo of one of your crabs", test:k => state.photos.some(p => p.day === k)},
+  {id:"early", icon:"⏰", label:"Finish all 5 daily quests before 6 PM", test:k => {
+    const c = state.checks[k] || {}; return DAILY.every(t => typeof c[t.id] === "number" && new Date(c[t.id]).getHours() < 18); }},
+  {id:"calcium", icon:"🦴", label:"Feed something with calcium (cuttlebone, eggshell, oyster shell)", test:k => feedsOn(k).some(f => CALCIUM.test(f.food))},
+  {id:"climate", icon:"🎯", label:"Log a reading that's in range for temp and humidity", test:k => readingsOn(k).some(r => tempOk(r.temp) && humOk(r.hum))},
+  {id:"side", icon:"🧽", label:"Finish any side quest", test:k => state.weeklyLog.some(w => w.day === k)},
+  {id:"combo", icon:"🍽️", label:"Log 2 different feedings today", test:k => new Set(feedsOn(k).map(f => f.food.toLowerCase().trim())).size >= 2}
+];
+function challengeFor(k){ let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return CHALLENGES[h % CHALLENGES.length]; }
+function activeDays(){
+  const set = new Set(Object.keys(state.checks));
+  state.readings.forEach(r => set.add(dayKey(r.t))); state.feedings.forEach(f => set.add(dayKey(f.t)));
+  state.photos.forEach(p => set.add(p.day)); state.weeklyLog.forEach(w => set.add(w.day));
+  return [...set].sort();
 }
-function totalXP(){ return baseXP() + trophyList().filter(t => t[5]).reduce((a, t) => a + t[4], 0); }
+
+/* everything below is computed from your logs, cached per save */
+let memo = {state:null, updated:-1, day:""};
+function stats(){
+  if (memo.state === state && memo.updated === state.updated && memo.day === dayKey()) return memo.v;
+  const days = activeDays();
+  const perfect = Object.keys(state.checks).filter(dayDone).sort();
+  const questsDone = Object.values(state.checks).reduce((a, c) => a + DAILY.filter(t => c && c[t.id]).length, 0);
+  const challengeDays = days.filter(k => challengeFor(k).test(k));
+  let base = questsDone * 10 + perfect.length * 25 + state.weeklyLog.length * 20;
+  base += perDayCapped(state.readings, r => dayKey(r.t), 3, 10);
+  base += perDayCapped(state.feedings, f => dayKey(f.t), 3, 10);
+  base += perDayCapped(state.photos, p => p.day, 3, 15);
+  base += challengeDays.length * 30;
+  state.crabs.forEach(c => { base += c.shells.length * 20 + c.molts.length * 75 + milestoneXP(c); });
+
+  // perfect calendar month
+  const byMonth = {}; perfect.forEach(k => { const m = k.slice(0, 7); byMonth[m] = (byMonth[m] || 0) + 1; });
+  const perfectMonth = Object.keys(byMonth).some(m => { const [y, mo] = m.split("-").map(Number); return byMonth[m] === new Date(y, mo, 0).getDate(); });
+  // comeback: a perfect day after 3+ days with no activity
+  const comeback = perfect.some(k => { const i = days.indexOf(k); return i > 0 && daysBetween(noon(days[i - 1]), noon(k)) >= 4; });
+  // full house: quests + side quest + reading + feeding + photo on the same day
+  const fullHouse = perfect.some(k => state.weeklyLog.some(w => w.day === k) && readingsOn(k).length && feedsOn(k).length && state.photos.some(p => p.day === k));
+  const earlyBird = Object.values(state.checks).some(c => c && DAILY.some(t => typeof c[t.id] === "number" && new Date(c[t.id]).getHours() < 7));
+  // both crabs molting at once (overlapping molts, or both molting now)
+  const spans = state.crabs.map(c => c.molts.map(m => [m.start, m.end]).concat(c.molting ? [[c.moltStart || dayKey(), dayKey()]] : []));
+  let doubleMolt = false;
+  for (let i = 0; i < spans.length; i++) for (let j = i + 1; j < spans.length; j++)
+    spans[i].forEach(a => spans[j].forEach(b => { if (a[0] <= b[1] && b[0] <= a[1]) doubleMolt = true; }));
+  const fashion = state.crabs.some(c => new Set(c.shells.map(x => (x.note || "").toLowerCase().trim()).filter(Boolean)).size >= 5);
+  const foods = new Set(state.feedings.map(f => f.food.toLowerCase().trim())).size;
+  const bs = bestStreak(), swaps = state.crabs.reduce((a, c) => a + c.shells.length, 0), molts = state.crabs.reduce((a, c) => a + c.molts.length, 0);
+  const maxDays = state.crabs.reduce((a, c) => Math.max(a, togetherDays(c)), 0);
+  const run = inRangeRun();
+  // [id, icon, name, how, xp, unlocked, rarity c/r/e/l, secret]
+  const list = [
+    ["first","🥇","First quest","Finish any care task",25, questsDone > 0,"c"],
+    ["perfect","⭐","Perfect day","Clear all 5 daily quests",25, perfect.length > 0,"c"],
+    ["side","🧽","Deep clean","Finish a side quest",25, state.weeklyLog.length > 0,"c"],
+    ["chal1","🎲","Challenge accepted","Beat a daily challenge",25, challengeDays.length > 0,"c"],
+    ["s3","🔥","On a roll","3-day streak",50, bs >= 3,"c"],
+    ["s7","⚡","Week warrior","7-day streak",100, bs >= 7,"r"],
+    ["s30","👑","Crab legend","30-day streak",300, bs >= 30,"e"],
+    ["s100","💯","Unstoppable","100-day streak",1000, bs >= 100,"e"],
+    ["s365","🌋","Year of the crab","365-day streak",5000, bs >= 365,"l"],
+    ["q100","⚙️","Grinder","Complete 100 daily quests",150, questsDone >= 100,"r"],
+    ["q1000","🤖","Quest machine","Complete 1,000 daily quests",1000, questsDone >= 1000,"e"],
+    ["pmonth","📅","Perfect month","Every day of a calendar month perfect",1500, perfectMonth,"l"],
+    ["chal10","🎰","Challenger","Beat 10 daily challenges",200, challengeDays.length >= 10,"r"],
+    ["chal100","🏅","Challenge champ","Beat 100 daily challenges",1500, challengeDays.length >= 100,"e"],
+    ["r10","🌡️","Weather station","Log 10 readings",50, state.readings.length >= 10,"c"],
+    ["r100","🛰️","Meteorologist","Log 100 readings",300, state.readings.length >= 100,"r"],
+    ["dial","🎯","Dialed in","5 in-range readings in a row",75, run >= 5,"r"],
+    ["dial30","🌴","Perfect climate","30 in-range readings in a row",500, run >= 30,"e"],
+    ["chef","🍳","Chef","Serve 5 different meals",50, foods >= 5,"c"],
+    ["buffet","🍱","Buffet boss","Serve 15 different meals",100, foods >= 15,"r"],
+    ["gourmet","🧑‍🍳","Gourmet","Serve 50 different meals",500, foods >= 50,"e"],
+    ["swap","🐚","New digs","Log a shell change",50, swaps > 0,"c"],
+    ["swap25","🏠","Shell shopper","Log 25 shell changes",500, swaps >= 25,"e"],
+    ["molt","🦀","Fresh armor","A crab finishes a molt",100, molts > 0,"r"],
+    ["molt10","🛡️","Molt master","10 molts finished",1000, molts >= 10,"e"],
+    ["pic","📸","Paparazzi","Add a photo",25, state.photos.length > 0,"c"],
+    ["pic10","🖼️","Photo album","Add 10 photos",75, state.photos.length >= 10,"r"],
+    ["pic50","🎬","Documentary","Add 50 photos",300, state.photos.length >= 50,"e"],
+    ["m1","🗓️","First month","Have a crab for 1 month",100, maxDays >= 30,"c"],
+    ["y1","🎂","Anniversary","Have a crab for 1 year",500, maxDays >= 365,"r"],
+    ["y4","🏛️","Veteran keeper","Have a crab for 4 years",1500, maxDays >= 1461,"e"],
+    ["y10","💫","Lifelong friends","Have a crab for 10 years",5000, maxDays >= 3652,"l"],
+    ["y20","🌌","Crab dynasty","Have a crab for 20 years",10000, maxDays >= 7305,"l"],
+    ["early","🌅","Early bird","???",100, earlyBird,"r",1],
+    ["comeback","🔁","Comeback kid","???",150, comeback,"r",1],
+    ["full","🃏","Full house","???",300, fullHouse,"e",1],
+    ["double","👯","Double trouble","???",300, doubleMolt,"e",1],
+    ["fashion","👒","Fashionista","???",150, fashion,"r",1]
+  ];
+  const SECRET_HINT = {early:"Finish a quest before 7 AM", comeback:"Perfect day after 3+ days away", full:"Quests, side quest, reading, feeding & photo in one day",
+    double:"Two crabs molting at the same time", fashion:"One crab wears 5 different shells"};
+  list.forEach(t => { if (t[7] && t[5]) t[3] = SECRET_HINT[t[0]]; });
+  const earned = list.filter(t => t[5]).reduce((a, t) => a + t[4], 0);
+  const lvl = levelInfo(base + earned).level;
+  list.push(["l5","🎮","Level 5","Reach keeper level 5",100, lvl >= 5,"c"]);
+  list.push(["l10","💎","Level 10","Reach keeper level 10",200, lvl >= 10,"r"]);
+  list.push(["l25","🔱","Level 25","Reach keeper level 25",1000, lvl >= 25,"e"]);
+  list.push(["l50","🐉","Level 50","Reach keeper level 50",5000, lvl >= 50,"l"]);
+  const total = base + list.filter(t => t[5]).reduce((a, t) => a + t[4], 0);
+  const v = {list, total, questsDone, perfect:perfect.length, challenges:challengeDays.length, activeDays:days.length, foods, molts, swaps, bs};
+  memo = {state, updated:state.updated, day:dayKey(), v};
+  return v;
+}
+function trophyList(){ return stats().list; }
+function totalXP(){ return stats().total; }
 
 /* ---------- tank helpers ---------- */
 const latest = () => state.readings.length ? state.readings[state.readings.length - 1] : null;
@@ -591,16 +738,23 @@ function render(){ renderHUD(); renderQuests(); renderCrabs(); renderTank(); ren
 
 function renderHUD(){
   const xp = totalXP(), L = levelInfo(xp), s = streak(), got = trophyList().filter(t => t[5]).length;
+  const tier = tierFor(L.level), nt = nextTitle(L.level);
+  $("hud").style.setProperty("--tier", tier[2]);
+  $("hud").classList.toggle("legend", L.level >= 50);
   $("hud").innerHTML = `<div class="row between">
-      <div><div class="muted small">Keeper</div><div class="title">${esc(L.title)}</div></div>
+      <div><div class="muted small">Keeper rank<span class="tierpill">${tier[1]}</span></div><div class="title">${esc(L.title)}</div></div>
       <div style="text-align:right"><div class="muted small">Level</div><div class="lv px">${L.level}</div></div></div>
     <div class="xpbar" role="progressbar" aria-valuemin="0" aria-valuemax="${L.next}" aria-valuenow="${L.into}" aria-label="XP to next level"><i style="width:${(L.into / L.next * 100).toFixed(1)}%"></i></div>
-    <div class="row between small muted" style="margin-top:4px"><span>${L.into} / ${L.next} XP</span><span>${xp} total</span></div>
+    <div class="row between small muted" style="margin-top:4px"><span>${L.into.toLocaleString()} / ${L.next.toLocaleString()} XP</span><span>${xp.toLocaleString()} total</span></div>
+    ${nt ? `<div class="small muted" style="margin-top:4px">New mystery title at LV ${nt[0]}: <b style="color:var(--text)">???</b></div>` : `<div class="small" style="margin-top:4px;color:var(--tier)">Max rank reached. You are the Supreme Overlord.</div>`}
     <div class="hudstats"><div><b>🔥 ${s}</b><span>day streak</span></div><div><b>${bestStreak()}</b><span>best streak</span></div><div><b>🏆 ${got}</b><span>trophies</span></div></div>`;
   let seen = 0; try { seen = Number(localStorage.getItem("crab-keeper-seen-level")) || 0; } catch(e){}
   if (prevLevel !== null && L.level > prevLevel && L.level > seen) {
     try { localStorage.setItem("crab-keeper-seen-level", String(L.level)); } catch(e){}
     $("luLevel").textContent = L.level; $("luName").textContent = L.title;
+    const tp = tierFor(L.level), tpPrev = tierFor(prevLevel);
+    $("luTier").textContent = tp[1] !== tpPrev[1] ? "Promoted to " + tp[1] + " tier!" : "";
+    $("luTier").style.color = tp[2]; $("luName").style.color = tp[2];
     $("levelup").classList.add("show"); setTimeout(() => $("luClose").focus(), 50);
   }
   if (prevLevel === null && L.level > seen) { try { localStorage.setItem("crab-keeper-seen-level", String(L.level)); } catch(e){} }
@@ -619,7 +773,18 @@ function renderQuests(){
       <span class="grow"><span>${t.label}</span><span class="sub">${t.sub}</span><span class="sub ${st.due ? "due" : "ok"}">${st.text}</span></span><span class="xp px">+20</span></button>`;
   }).join("");
 
+  const ch = challengeFor(k), chDone = ch.test(k);
+  $("challenge").className = "panel challenge" + (chDone ? " done" : "");
+  $("challenge").innerHTML = `<div class="row between"><h3 style="margin:0">Daily challenge</h3><span class="xp px" style="font-size:10px;color:${chDone ? "var(--good)" : "var(--gold)"}">${chDone ? "Done" : "+30 XP"}</span></div>
+    <div class="row" style="margin-top:8px"><span style="font-size:26px" aria-hidden="true">${ch.icon}</span><span class="grow">${ch.label}</span></div>
+    <p class="muted small" style="margin:6px 0 0">${chDone ? "Beaten! New challenge tomorrow." : "It completes on its own when you do it."}</p>`;
+
   const out = [], r = latest();
+  state.crabs.forEach(c => {
+    const d = togetherDays(c), m = MILESTONES.find(x => x[0] === d);
+    if (m) out.push(`<div class="party"><b>🎉 ${esc(c.name)}: ${m[1]} together!</b>+${m[2].toLocaleString()} XP unlocked. Give ${esc(c.name)} a special treat today.</div>`);
+    else if (d > 0 && d % 365 === 0) out.push(`<div class="party"><b>🎂 Happy ${d / 365}-year gotcha day, ${esc(c.name)}!</b></div>`);
+  });
   if (!r) out.push(`<div class="note"><b>Log your first reading</b>Go to Tank and enter the temp and humidity from your gauge.</div>`);
   else {
     const hrs = (Date.now() - r.t) / 3600000;
@@ -664,6 +829,15 @@ function renderCrabs(){
           <div class="pm"><button data-skill="${c.id}|${k}|-1" aria-label="Lower ${label}">−</button><button data-skill="${c.id}|${k}|1" aria-label="Raise ${label}">+</button></div></div>`;
       }).join("")}</div>
       <div class="traits" style="margin-top:10px">${TRAITS.map(t => `<button class="trait" data-trait="${c.id}|${t}" aria-pressed="${c.traits.includes(t)}">${t}</button>`).join("")}</div>
+      ${(() => {
+        const nm = nextMilestone(c), prev = MILESTONES.filter(m => m[0] <= days).pop(), age = estAge(c);
+        const from = prev ? prev[0] : 0, pct = nm ? Math.round((days - from) / (nm[0] - from) * 100) : 100;
+        return `<div class="ms"><div class="row between"><span><b>Together ${days} day${days === 1 ? "" : "s"}</b></span>
+          <span class="muted small">${age === null ? "Age: set it below" : "Est. age " + fmtYears(age)}</span></div>
+          ${nm ? `<div class="meter"><i style="width:${pct}%;background:var(--gold)"></i></div>
+          <div class="muted small" style="margin-top:4px">${nm[1]} in ${nm[0] - days} day${nm[0] - days === 1 ? "" : "s"} · <span style="color:var(--gold)">+${nm[2].toLocaleString()} XP</span></div>` : `<div class="small" style="color:var(--gold)">Every milestone reached. Legend.</div>`}
+          <div class="badges">${MILESTONES.map(m => `<span class="badge ${days >= m[0] ? "on" : ""}">${m[1]}</span>`).join("")}</div></div>`;
+      })()}
       <div class="records"><div><b>${days}</b><span>days</span></div><div><b>${c.molts.length}</b><span>molts</span></div><div><b>${c.shells.length}</b><span>shells</span></div><div><b>${state.photos.filter(p => p.crab === c.id).length}</b><span>photos</span></div></div>
       <div class="grid2" style="margin-top:10px">
         <button class="btn" data-swap="${c.id}">Changed shell</button>
@@ -675,7 +849,9 @@ function renderCrabs(){
         <label class="f" for="notes-${c.id}" style="margin-top:10px">Notes</label>
         <textarea id="notes-${c.id}" data-notes="${c.id}" placeholder="Personality, favorite foods, funny moments">${esc(c.notes)}</textarea>
         <div class="grid2" style="margin-top:8px">
-          <div><label class="f" for="since-${c.id}">Got on</label><input type="date" id="since-${c.id}" data-since="${c.id}" value="${esc(c.since)}" max="${dayKey()}"></div>
+          <div><label class="f" for="since-${c.id}">Got on</label><input type="date" id="since-${c.id}" data-since="${c.id}" value="${esc(c.since)}" min="${minSince(c)}" max="${dayKey()}"></div>
+          <div><label class="f" for="age-${c.id}">Age when you got it</label><select id="age-${c.id}" data-age="${c.id}">
+            ${AGES.map(([v, n]) => `<option value="${v}" ${String(c.ageAtGet) === v ? "selected" : ""}>${n}</option>`).join("")}</select></div>
           <div><label class="f" for="color-${c.id}">Card color</label><select id="color-${c.id}" data-color="${c.id}">
             ${[["#FF5A6E","Red"],["#3DDC84","Green"],["#4CC9F0","Blue"],["#FFC83D","Gold"],["#9B6BFF","Purple"],["#FF8A3D","Orange"]].map(([v,n]) => `<option value="${v}" ${v === c.color ? "selected" : ""}>${n}</option>`).join("")}
           </select></div>
@@ -735,10 +911,33 @@ function renderFood(){
   const n = new Set(week.map(f => f.food.toLowerCase().trim())).size;
   $("variety").textContent = week.length ? `${n} different meal${n === 1 ? "" : "s"} this week. Mix protein, fruit, veggies, and calcium.` : "Nothing logged this week yet.";
 }
+const RARITY = {c:["Common","var(--muted)"], r:["Rare","var(--cyan)"], e:["Epic","var(--violet)"], l:["Legendary","var(--gold)"]};
 function renderTrophies(){
-  const list = trophyList(), got = list.filter(t => t[5]).length;
+  const st = stats(), list = st.list, got = list.filter(t => t[5]).length;
   $("trophyCount").textContent = `${got} of ${list.length} unlocked`;
-  $("trophies").innerHTML = list.map(t => `<div class="trophy ${t[5] ? "got" : ""}"><div class="ic" aria-hidden="true">${t[1]}</div><b>${t[2]}</b><span>${t[3]}</span><span class="xp px">${t[5] ? "Unlocked" : "+" + t[4] + " XP"}</span></div>`).join("");
+  const order = {l:0, e:1, r:2, c:3};
+  const sorted = list.slice().sort((a, b) => (b[5] - a[5]) || (order[a[6]] - order[b[6]]));
+  $("trophies").innerHTML = sorted.map(t => {
+    const [rn, rc] = RARITY[t[6]] || RARITY.c, hidden = t[7] && !t[5];
+    return `<div class="trophy ${t[5] ? "got" : ""} ${hidden ? "secret" : ""}" style="--rc:${rc}"><div class="ic" aria-hidden="true">${hidden ? "❓" : t[1]}</div>
+      <b>${hidden ? "???" : t[2]}</b><span class="rar">${hidden ? "Secret · " : ""}${rn}</span><span>${hidden ? "Keep playing to find it" : t[3]}</span>
+      <span class="xp px">${t[5] ? "Unlocked" : "+" + t[4].toLocaleString() + " XP"}</span></div>`;
+  }).join("");
+  const cur = levelInfo(st.total).level;
+  const ladder = [];
+  for (let L = 1; L <= 50; L++) ladder.push([L, TITLES[L - 1]]);
+  PRESTIGE.forEach(p => ladder.push(p));
+  $("ranks").innerHTML = ladder.map(([lv, n]) => {
+    const t = tierFor(lv), state = lv < cur ? "done" : lv === cur ? "now" : "locked";
+    const hidden = lv > cur;
+    return `<li class="${state === "now" ? "now" : state === "locked" ? "locked" : ""}"><span><span class="px" style="font-size:9px;color:${t[2]}">LV ${lv}</span> ${hidden ? "???" : esc(n)}</span><span class="small" style="color:${t[2]}">${state === "now" ? "You" : state === "done" ? "✓" : t[1]}</span></li>`;
+  }).join("");
+  const nowLi = $("ranks").querySelector(".now"); if (nowLi) $("ranks").scrollTop = Math.max(0, nowLi.offsetTop - 120);
+  $("records").innerHTML = [
+    [st.questsDone, "quests done"], [st.perfect, "perfect days"], [st.bs, "best streak"], [st.challenges, "challenges beaten"],
+    [st.activeDays, "days played"], [state.readings.length, "readings"], [st.foods, "different meals"], [st.molts, "molts"],
+    [st.swaps, "shell changes"], [state.photos.length, "photos"]
+  ].map(([n, l]) => `<div><b>${Number(n).toLocaleString()}</b><span>${l}</span></div>`).join("");
 }
 
 /* ---------- actions ---------- */
@@ -750,7 +949,7 @@ document.addEventListener("click", e => {
   const k = dayKey(), before = totalXP(), ds = b.dataset;
   if (ds.daily) {
     const c = state.checks[k] = state.checks[k] || {};
-    c[ds.daily] = !c[ds.daily]; save();
+    c[ds.daily] = c[ds.daily] ? false : Date.now(); save();
     if (c[ds.daily]) xpToast(before, dayDone(k) ? "Perfect day!" : "Quest complete");
   } else if (ds.weekly) {
     const i = state.weeklyLog.findIndex(w => w.id === ds.weekly && w.day === k);
@@ -786,11 +985,20 @@ document.addEventListener("click", e => {
 
 document.addEventListener("change", e => {
   const t = e.target, ds = t.dataset;
-  const id = ds.name || ds.shell || ds.since || ds.notes || ds.color; if (!id) return;
+  const id = ds.name || ds.shell || ds.since || ds.notes || ds.color || ds.age; if (!id) return;
   const c = findCrab(id); if (!c) return;
   if (ds.name) c.name = t.value.trim() || c.name;
   if (ds.shell !== undefined) c.shell = t.value.trim();
-  if (ds.since && t.value) c.since = t.value;
+  if (ds.since && t.value) {
+    const min = minSince(c), before = totalXP();
+    let v = t.value, clamped = false; if (v < min) { v = min; clamped = true; }
+    if (v > dayKey()) v = dayKey();
+    c.since = v; t.blur(); save();
+    if (clamped) toast("Set to " + fmtDay(min) + ", the earliest allowed (60 days before you added " + c.name + ")");
+    else if (totalXP() > before) xpToast(before, "Milestone unlocked!");
+    return;
+  }
+  if (ds.age !== undefined) c.ageAtGet = t.value;
   if (ds.notes !== undefined) c.notes = t.value;
   if (ds.color) c.color = t.value;
   t.blur(); save();
