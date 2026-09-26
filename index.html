@@ -136,6 +136,8 @@ summary{cursor:pointer;font-weight:700;color:var(--muted);padding:4px 0}
 .avatar.nudge{animation:nudge 1.6s ease-in-out infinite}
 @keyframes nudge{50%{box-shadow:0 0 0 4px var(--gold)}}
 .nudgetxt{font-size:12px;color:var(--gold);font-weight:700;margin-top:4px}
+.stk,.sview{position:fixed;inset:0;z-index:25;background:var(--bg);overflow-y:auto;padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(24px + env(safe-area-inset-bottom,0px))}
+.stk .in,.sview .in{max-width:560px;margin:0 auto}
 .gview{position:fixed;inset:0;z-index:25;background:var(--bg);overflow-y:auto;padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(24px + env(safe-area-inset-bottom,0px))}
 .gview .in{max-width:560px;margin:0 auto}
 .ph .pf{position:absolute;top:3px;left:3px;font-size:10px;font-weight:700;background:var(--gold);color:#1B1530;border-radius:2px;padding:1px 4px}
@@ -178,6 +180,138 @@ summary{cursor:pointer;font-weight:700;color:var(--muted);padding:4px 0}
 .statgrid b{display:block;font-size:22px}.statgrid span{font-size:13px;color:var(--muted)}
 .party{border:2px solid var(--gold);background:rgba(255,200,61,.1);border-radius:5px;padding:12px 13px;margin-bottom:10px}
 .party b{display:block;color:var(--gold)}
+/* login, boss, spares, growth */
+.login .days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:10px 0}
+.login .d{background:var(--panel-2);border:2px solid var(--line);border-radius:4px;text-align:center;padding:6px 0;font-size:11px}
+.login .d b{display:block;font-size:14px}
+.login .d.got{border-color:var(--good);opacity:.6}
+.login .d.now{border-color:var(--gold);box-shadow:0 0 0 2px rgba(255,200,61,.3)}
+.boss{border-color:var(--bad)}
+.boss.won{border-color:var(--good)}
+.bossicon{width:74px;flex:0 0 74px}
+.boss.won .bossicon{filter:grayscale(1);opacity:.5}
+.hpbar{height:18px;background:var(--panel-2);border:2px solid var(--line);border-radius:3px;overflow:hidden;margin-top:8px}
+.hpbar i{display:block;height:100%;background:linear-gradient(90deg,#FF5A6E,#FF8A3D);transition:width .5s}
+.slottabs{display:flex;gap:6px;overflow-x:auto;margin:10px 0}
+.slottabs button{flex:0 0 auto;border:2px solid var(--line);background:var(--panel-2);border-radius:3px;padding:6px 10px;font-weight:700;color:var(--muted)}
+.slottabs button[aria-selected="true"]{border-color:var(--gold);color:var(--text)}
+.items{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.item{background:var(--panel-2);border:2px solid var(--line);border-radius:5px;padding:8px;text-align:center}
+.item.eq{border-color:var(--good)}
+.item svg{width:90px;display:block;margin:0 auto}
+.item b{display:block;font-size:14px;margin:4px 0}
+.wbtn svg{width:26px;vertical-align:middle;margin-right:4px}
+.fit{font-size:12px;font-weight:700;padding:1px 6px;border-radius:3px;margin-left:4px}
+.fit.ok{background:rgba(61,220,132,.15);color:var(--good)}
+.fit.big{background:rgba(76,201,240,.15);color:var(--cyan)}
+.fit.small{background:rgba(255,90,110,.15);color:var(--bad)}
+.shellopt{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;background:var(--panel-2);border:2px solid var(--line);border-radius:5px;padding:10px 12px;margin-bottom:8px}
+/* sticker editor */
+.stk{z-index:35}
+.stage{position:relative;display:block;margin:0 auto;touch-action:none;user-select:none;-webkit-user-select:none;overflow:hidden;border-radius:6px;background:#000}
+.stage img.base{display:block;width:100%;height:auto;pointer-events:none}
+.stk-item{position:absolute;left:0;top:0;transform-origin:center center;touch-action:none;cursor:grab}
+.stk-item svg{width:100%;height:auto;display:block;pointer-events:none}
+.stk-item.sel{outline:2px dashed var(--gold);outline-offset:3px}
+.tray{display:flex;gap:8px;overflow-x:auto;padding:10px 0}
+.tray button{flex:0 0 74px;background:var(--panel-2);border:2px solid var(--line);border-radius:5px;padding:6px 4px;font-size:11px;font-weight:700;color:var(--text)}
+.tray button svg{width:48px;height:36px;display:block;margin:0 auto 3px}
+.tray button.locked{opacity:.75}
+.tray button .price{color:var(--gold)}
+.stkbar{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+/* boss battle */
+.fab{position:fixed;right:14px;bottom:calc(78px + env(safe-area-inset-bottom,0px));z-index:15;width:66px;height:66px;border-radius:50%;
+  border:3px solid var(--bad);background:var(--panel);display:grid;place-items:center;padding:0;animation:fabpulse 2s ease-in-out infinite;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+.fab .fe{width:48px;display:block;margin-top:-4px}.fab .fe svg{width:100%;height:auto;display:block}
+.fab .fhp{position:absolute;left:8px;right:8px;bottom:7px;height:5px;background:#3A2F5C;border-radius:3px;overflow:hidden}
+.fab .fhp i{display:block;height:100%;background:var(--bad)}
+.fab .ftag{position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-size:8px;background:var(--bad);color:#fff;padding:2px 5px;border-radius:3px;white-space:nowrap}
+@keyframes fabpulse{50%{box-shadow:0 0 0 7px rgba(255,90,110,.25)}}
+.battle{position:fixed;inset:0;z-index:30;background:radial-gradient(ellipse at 50% 35%,#2A1640 0%,#100C1C 70%);display:flex;flex-direction:column;
+  padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px));overflow:hidden;color:#EEE8FF}
+.battle .top{max-width:560px;width:100%;margin:0 auto}
+.bhp{height:20px;background:#251D40;border:2px solid #3A2F5C;border-radius:3px;overflow:hidden;margin-top:6px;position:relative}
+.bhp i{display:block;height:100%;background:linear-gradient(90deg,#FF5A6E,#FF8A3D);transition:width .4s}
+.bhp span{position:absolute;inset:0;display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 2px #000}
+.khp i{background:linear-gradient(90deg,#3DDC84,#4CC9F0)}
+.arena{flex:1;position:relative;display:grid;place-items:center;min-height:180px}
+.bossbig{width:min(88vw,380px);animation:bob 2.4s ease-in-out infinite;filter:drop-shadow(0 12px 22px rgba(255,90,110,.35))}
+.bossbig svg{width:100%;height:auto;display:block;overflow:visible}
+.bossbig .clawL,.bossbig .clawR,.bossbig .pincL,.bossbig .pincR,.bossbig .eyes,.bossbig .legs,.bossbig .mouth{transform-box:fill-box}
+.bossbig .clawL{transform-origin:100% 100%;animation:clawL 3.2s ease-in-out infinite}
+.bossbig .clawR{transform-origin:0% 100%;animation:clawR 3.2s ease-in-out infinite .4s}
+.bossbig .pincL{transform-origin:20% 80%;animation:snap 1.6s ease-in-out infinite}
+.bossbig .pincR{transform-origin:80% 80%;animation:snapR 1.6s ease-in-out infinite .8s}
+.bossbig .eyes{transform-origin:50% 50%;animation:blink 4.5s infinite}
+.bossbig .legs{transform-origin:50% 0%;animation:scuttle .5s ease-in-out infinite alternate}
+.bossbig .mouth{transform-origin:50% 0%;animation:chomp 2s ease-in-out infinite}
+.bossbig .xeyes{display:none}
+.bossbig .tent,.bossbig .tail,.bossbig .wingL,.bossbig .wingR,.bossbig .finL,.bossbig .finR,.bossbig .lure,.bossbig .jaw{transform-box:fill-box}
+.bossbig .tent{transform-origin:50% 0%;animation:wave 2.6s ease-in-out infinite}
+.bossbig .tent:nth-child(2n){animation-delay:-.9s;animation-duration:2.2s}
+.bossbig .tent:nth-child(3n){animation-delay:-1.6s;animation-duration:3s}
+.bossbig .tail{transform-origin:50% 0%;animation:wag 1.2s ease-in-out infinite}
+.bossbig .wingL{transform-origin:100% 20%;animation:flapL .9s ease-in-out infinite}
+.bossbig .wingR{transform-origin:0% 20%;animation:flapR .9s ease-in-out infinite}
+.bossbig .finL{transform-origin:100% 0%;animation:flapL 1.6s ease-in-out infinite}
+.bossbig .finR{transform-origin:0% 0%;animation:flapR 1.6s ease-in-out infinite}
+.bossbig .lure{transform-origin:0% 100%;animation:lure 2s ease-in-out infinite}
+.bossbig .lure circle{animation:glow 1.4s ease-in-out infinite}
+.bossbig .jaw{transform-origin:50% 0%;animation:chomp 1.8s ease-in-out infinite}
+@keyframes wave{50%{transform:rotate(9deg)}}
+@keyframes wag{50%{transform:rotate(-12deg)}}
+@keyframes flapL{50%{transform:rotate(18deg)}}
+@keyframes flapR{50%{transform:rotate(-18deg)}}
+@keyframes lure{50%{transform:rotate(-10deg) translateY(-4px)}}
+@keyframes glow{50%{opacity:.55}}
+.bossbig.rage .tent,.bossbig.rage .tail,.bossbig.rage .wingL,.bossbig.rage .wingR,.bossbig.rage .jaw{animation-duration:.6s}
+.bossbig.lunge .tent{animation:slam .5s ease}
+.bossbig.lunge .jaw{animation:bite .5s ease}
+.bossbig.lunge .wingL{animation:swipeL .5s ease}.bossbig.lunge .wingR{animation:swipeR .5s ease}
+@keyframes slam{40%{transform:rotate(-25deg) scaleY(1.2)}}
+@keyframes bite{40%{transform:scaleY(1.8)}}
+@keyframes clawL{50%{transform:rotate(-8deg)}}
+@keyframes clawR{50%{transform:rotate(8deg)}}
+@keyframes snap{0%,60%,100%{transform:rotate(0)}70%{transform:rotate(-22deg)}80%{transform:rotate(0)}}
+@keyframes snapR{0%,60%,100%{transform:rotate(0)}70%{transform:rotate(22deg)}80%{transform:rotate(0)}}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes scuttle{to{transform:translateX(3px) skewX(4deg)}}
+@keyframes chomp{50%{transform:scaleY(1.35)}}
+.bossbig.rage{filter:drop-shadow(0 0 22px rgba(255,40,40,.8))}
+.bossbig.rage .clawL,.bossbig.rage .clawR{animation-duration:1.2s}
+.bossbig.rage .pincL,.bossbig.rage .pincR{animation-duration:.6s}
+.bossbig.rage .legs{animation-duration:.2s}
+.bossbig.lunge .clawL{animation:swipeL .5s ease}
+.bossbig.lunge .clawR{animation:swipeR .5s ease}
+@keyframes swipeL{40%{transform:rotate(-40deg) translateY(-10px)}100%{transform:rotate(0)}}
+@keyframes swipeR{40%{transform:rotate(40deg) translateY(-10px)}100%{transform:rotate(0)}}
+.bossbig.ko .eyes{display:none}.bossbig.ko .xeyes{display:inline}
+.bossbig.ko *{animation-play-state:paused}
+.bossmini svg{width:100%;height:auto;display:block}
+.bossbig.hit{animation:hit .35s ease}
+.bossbig.lunge{animation:lunge .5s ease}
+.bossbig.ko{animation:ko 1.2s ease forwards}
+@keyframes bob{50%{transform:translateY(-10px)}}
+@keyframes hit{0%{transform:translateX(0);filter:brightness(2.2) saturate(0)}25%{transform:translateX(-14px) rotate(-6deg)}50%{transform:translateX(12px) rotate(5deg)}100%{transform:translateX(0);filter:none}}
+@keyframes lunge{40%{transform:scale(1.35) translateY(40px)}100%{transform:none}}
+@keyframes ko{30%{transform:rotate(-25deg) scale(1.1)}100%{transform:rotate(90deg) translateY(60px) scale(.6);opacity:.25;filter:grayscale(1)}}
+.pop{position:absolute;font-family:"Press Start 2P",monospace;font-size:20px;pointer-events:none;animation:popup 1s ease-out forwards;text-shadow:0 2px 0 #000}
+.pop.dmg{color:#FFC83D}.pop.heal{color:#3DDC84}.pop.big{font-size:30px;color:#FF5A6E}
+@keyframes popup{0%{transform:translateY(0) scale(.6);opacity:0}15%{transform:translateY(-10px) scale(1.2);opacity:1}100%{transform:translateY(-70px) scale(1);opacity:0}}
+.flash{position:absolute;inset:0;background:#FF5A6E;opacity:0;pointer-events:none}
+.flash.go{animation:flash .45s ease}
+@keyframes flash{30%{opacity:.35}}
+.shake{animation:shake .4s ease}
+@keyframes shake{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-3px)}}
+.bmsg{text-align:center;font-weight:700;min-height:22px;font-size:15px}
+.btasks{max-width:560px;width:100%;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.btasks .col{display:flex;flex-direction:column;gap:6px}
+.btasks h4{margin:0;font-size:12px;color:#9E93C2}
+.bt{display:flex;align-items:center;gap:8px;text-align:left;background:#251D40;border:2px solid #3A2F5C;border-radius:5px;padding:8px;font-size:13px;font-weight:700;color:#EEE8FF;min-height:40px}
+.bt[aria-pressed="true"]{border-color:#3DDC84;opacity:.55}
+.bt .sw{margin-left:auto;font-family:"Press Start 2P",monospace;font-size:8px;color:#FFC83D}
+.bt[aria-pressed="true"] .sw{color:#3DDC84}
+@media (prefers-reduced-motion:reduce){.bossbig,.fab{animation:none!important}}
 /* ask */
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .chip{border:2px solid var(--line);background:var(--panel-2);border-radius:3px;padding:5px 10px;font-size:14px}
@@ -212,13 +346,15 @@ nav.tabs button[aria-selected="true"]{color:var(--gold)}
 
 <!-- QUESTS -->
 <section id="tab-quests" hidden>
+  <div class="panel login" id="login"></div>
   <div id="alerts"></div>
-  <div class="panel challenge" id="challenge"></div>
   <div class="panel">
     <div class="row between"><h3 style="margin:0">Daily quests</h3><span class="muted small" id="dailyCount"></span></div>
     <p class="muted small" style="margin:4px 0 10px">Clear all 5 for a +25 XP perfect-day bonus. Resets at midnight.</p>
     <div id="daily"></div>
   </div>
+  <div class="panel challenge" id="challenge"></div>
+  <div class="panel boss" id="boss"></div>
   <div class="panel">
     <h3>Side quests</h3>
     <div id="weekly"></div>
@@ -237,6 +373,16 @@ nav.tabs button[aria-selected="true"]{color:var(--gold)}
 <section id="tab-crabs" hidden>
   <div id="crabList"></div>
   <input type="file" id="fileIn" accept="image/*" hidden>
+  <div class="panel">
+    <div class="row between"><h3 style="margin:0">Spare shells</h3><span class="small" id="spareCount"></span></div>
+    <p class="muted small" style="margin:4px 0 10px">Keep 3+ per crab, with openings a little bigger than their current shells. Add each crab's opening size in its settings to see which shells fit.</p>
+    <div id="spareList"></div>
+    <div class="row" style="margin-top:8px">
+      <input id="spareIn" type="text" class="grow" placeholder="e.g. white turbo shell" aria-label="Spare shell description" maxlength="40">
+      <input id="spareMM" type="number" inputmode="decimal" placeholder="mm" aria-label="Opening size in mm" style="width:78px;flex:0 0 78px">
+      <button class="btn small" id="spareAdd">Add</button>
+    </div>
+  </div>
   <button class="btn ghost" id="addCrab" style="width:100%">Recruit another crab</button>
 </section>
 
@@ -263,6 +409,10 @@ nav.tabs button[aria-selected="true"]{color:var(--gold)}
   <div class="panel">
     <h3>Recent readings</h3>
     <ul class="list" id="readingList"></ul>
+  </div>
+  <div class="panel">
+    <h3>Deep cleaning</h3>
+    <div id="maint"></div>
   </div>
   <div class="panel">
     <h3>Loot to buy</h3>
@@ -350,10 +500,55 @@ nav.tabs button[aria-selected="true"]{color:var(--gold)}
     <div class="gallery" id="gGrid"></div>
   </div>
 </div>
+<button class="fab" id="bossFab" hidden aria-label="Open the boss battle"><span class="ftag px">BOSS</span><span class="fe" id="fabIcon"></span><span class="fhp"><i id="fabHp"></i></span></button>
+<div class="battle" id="battle" hidden role="dialog" aria-modal="true" aria-labelledby="bName">
+  <div class="top">
+    <div class="row between"><div><b id="bName" style="font-size:20px"></b> <span class="small" style="color:#9E93C2" id="bDays"></span></div>
+      <button class="btn ghost small" id="bClose" style="color:#EEE8FF">Leave</button></div>
+    <div class="bhp" aria-label="Boss health"><i id="bHpBar"></i><span id="bHpTxt"></span></div>
+  </div>
+  <div class="arena" id="arena"><div class="flash" id="bFlash"></div><div class="bossbig" id="bossBig" aria-hidden="true"></div></div>
+  <div class="top" id="keeperBox">
+    <div class="bmsg" id="bMsg"></div>
+    <div class="row between small" style="margin-top:4px"><span style="color:#9E93C2">You</span><span style="color:#9E93C2" id="kTxt"></span></div>
+    <div class="bhp khp" style="margin:2px 0 10px" aria-label="Your health"><i id="kHpBar"></i></div>
+  </div>
+  <div class="btasks" id="bTasks"></div>
+</div>
+<div class="stk" id="stk" hidden role="dialog" aria-modal="true" aria-labelledby="stkTitle">
+  <div class="in">
+    <div class="row between" style="margin-bottom:8px"><h2 id="stkTitle" style="margin:0">Stickers</h2><span id="stkCoins" style="color:var(--gold);font-weight:700"></span></div>
+    <div class="stage" id="stage"><img class="base" id="stkImg" alt="Photo you're decorating"></div>
+    <p class="muted small" style="margin:6px 0 0;text-align:center">Drag to move · pinch to resize and rotate · tap a sticker to select it</p>
+    <div class="stkbar">
+      <button class="btn ghost small" id="stkSmall" aria-label="Make smaller">−</button><button class="btn ghost small" id="stkBig" aria-label="Make bigger">+</button>
+      <button class="btn ghost small" id="stkRotL" aria-label="Rotate left">⟲</button><button class="btn ghost small" id="stkRotR" aria-label="Rotate right">⟳</button>
+      <button class="btn ghost small" id="stkFlip" aria-label="Flip">⇋</button><button class="btn ghost small" id="stkDel" style="color:var(--bad);border-color:var(--bad)" aria-label="Remove sticker">✕</button>
+    </div>
+    <div class="tray" id="tray" aria-label="Stickers"></div>
+    <div class="grid2"><button class="btn ghost" id="stkCancel">Cancel</button><button class="btn gold" id="stkSave">Save photo</button></div>
+  </div>
+</div>
+<div class="sview" id="sview" hidden role="dialog" aria-modal="true" aria-labelledby="sTitle">
+  <div class="in">
+    <div class="row between" style="margin-bottom:10px"><h2 id="sTitle" style="margin:0"></h2><button class="btn ghost small" id="sClose">Cancel</button></div>
+    <p class="muted small" id="sSub"></p>
+    <div id="sList"></div>
+    <h3 style="margin-top:14px">Or a shell that isn't in your spares</h3>
+    <div class="row"><input id="sNew" type="text" class="grow" placeholder="Describe the new shell" maxlength="40" aria-label="New shell description">
+      <input id="sNewMM" type="number" inputmode="decimal" placeholder="mm" style="width:78px;flex:0 0 78px" aria-label="Opening size in mm"></div>
+    <button class="btn" id="sUseNew" style="width:100%;margin-top:8px">Use this shell</button>
+  </div>
+</div>
+<div class="levelup" id="reward" role="dialog" aria-modal="true" aria-labelledby="rwTitle">
+  <div class="card"><div style="font-size:56px;line-height:1" id="rwIcon"></div><div class="l1 px" id="rwTitle" style="margin-top:12px"></div>
+  <div id="rwText" style="font-size:18px;font-weight:700;margin-top:10px"></div>
+  <button class="btn gold" id="rwClose" style="margin-top:18px;width:100%">Nice!</button></div>
+</div>
 <div class="viewer" id="viewer" hidden>
   <img id="vImg" alt="">
   <div class="cap" id="vCap"></div>
-  <div class="row" style="flex-wrap:wrap;justify-content:center"><button class="btn ghost" id="vDel" style="color:#FF5A6E;border-color:#FF5A6E">Delete</button><button class="btn gold" id="vSetPf">Set as profile</button><button class="btn" id="vClose">Close</button></div>
+  <div class="row" style="flex-wrap:wrap;justify-content:center"><button class="btn ghost" id="vDel" style="color:#FF5A6E;border-color:#FF5A6E">Delete</button><button class="btn gold" id="vSetPf">Set as profile</button><button class="btn" id="vStk">✨ Stickers</button><button class="btn ghost" id="vShare">Save to Photos</button><button class="btn" id="vClose">Close</button></div>
 </div>
 
 <script>
@@ -364,7 +559,8 @@ const dayKey = (d = new Date()) => { const x = new Date(d); return x.getFullYear
 const noon = k => new Date(k + "T12:00:00");
 const daysBetween = (a, b) => Math.round((noon(dayKey(a)) - noon(dayKey(b))) / -86400000);
 const daysSince = k => daysBetween(noon(k), new Date());
-const uid = () => Math.random().toString(36).slice(2, 10);
+let uidN = 0;
+const uid = () => Date.now().toString(36) + (uidN++).toString(36) + Math.random().toString(36).slice(2, 6);
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmtTime = t => new Date(t).toLocaleString([], {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"});
 const fmtDay = k => noon(k).toLocaleDateString([], {month:"short", day:"numeric"});
@@ -408,6 +604,29 @@ function nextTitle(L){
 // time-together milestones: [days, label, XP] (counted per crab)
 const MILESTONES = [[7,"1 week",50],[30,"1 month",100],[100,"100 days",250],[182,"6 months",300],[365,"1 year",1000],[730,"2 years",1500],[1095,"3 years",2000],
   [1461,"4 years",3000],[1826,"5 years",4000],[2557,"7 years",6000],[3652,"10 years",10000],[5479,"15 years",15000],[7305,"20 years",25000]];
+// deep cleaning schedule
+const MAINT = [
+  {id:"deep", label:"Deep clean", sub:"Wipe the glass, rinse decor in hot dechlorinated water, swap out dirty coconut fiber", every:30, xp:50},
+  {id:"substrate", label:"Full substrate change", sub:"Replace all the sand and fiber. Never while a crab is buried molting!", every:182, xp:100}
+];
+// stickers you can put on real photos: [id, name, price]
+const STICKERS = [
+  ["heart","Heart",0],["sparkle","Sparkles",0],["party","Party hat",60],["bowtie","Bow tie",60],["shades","Sunglasses",80],
+  ["redcape","Red cape",100],["fire","Fire",100],["cowboy","Cowboy hat",120],["pirate","Pirate hat",150],["herocape","Hero cape",180],
+  ["wizard","Wizard hat",220],["viking","Viking helmet",260],["crown","Gold crown",400],["galaxycape","Galaxy cape",600],["diamond","Diamond crown",800]
+].map(([id, name, price]) => ({id, name, price}));
+// weekly bosses (a new one every Monday)
+const BOSSES = [
+  {name:"Mold Monster", icon:"🦠", hp:600, lore:"A giant crab crusted in mold. Grows wherever the tank gets too wet.", t:{type:"crab", body:"#5E8C3A", dark:"#2F4A1B", shell:"#7A6A3A", eye:"#D4FF4F", deco:"mold"}},
+  {name:"Heat Wave Hammerhead", icon:"🦈", hp:650, lore:"A hammerhead shark that cranks the tank way too hot.", t:{type:"shark", body:"#6D8DA8", dark:"#2E4A63", belly:"#E8EEF3", eye:"#FF5A6E"}},
+  {name:"Chlorine Kraken", icon:"🐙", hp:720, lore:"A toxic giant octopus that lurks in untreated tap water.", t:{type:"kraken", body:"#7B3FA0", dark:"#3A1452", spot:"#9BE36A", eye:"#D4FF4F"}},
+  {name:"Mite Swarm King", icon:"👑", hp:620, lore:"A crowned crab covered in mites. Rules the leftovers nobody cleaned up.", t:{type:"crab", body:"#6B4A2E", dark:"#3A2616", shell:"#4A3322", eye:"#FF5A6E", deco:"crown"}},
+  {name:"Cold Snap Yeti Crab", icon:"🥶", hp:680, lore:"A frozen deep-sea yeti crab. Freezes tanks with no heater.", t:{type:"crab", body:"#CFE6F5", dark:"#6D8DA8", shell:"#A9CCE6", eye:"#4CC9F0", deco:"ice"}},
+  {name:"Shell Thief Gull", icon:"🐦", hp:640, lore:"A bandit seagull that snatches spare shells (and crabs!) off the beach.", t:{type:"gull", body:"#F4F4F8", dark:"#4B5263", wing:"#9AA3B5", eye:"#100C1C"}},
+  {name:"Copper Golem", icon:"🤖", hp:750, lore:"A crab made of copper, the metal that's poison to crabs.", t:{type:"crab", body:"#C77B3B", dark:"#6B3A12", shell:"#9A5A26", eye:"#3DDC84", deco:"rivets"}},
+  {name:"Rotten Angler", icon:"🎣", hp:660, lore:"A deep-sea anglerfish that lures crabs with old, rotten food.", t:{type:"angler", body:"#2B3A55", dark:"#0F1826", lure:"#D4FF4F", eye:"#FFFFFF"}}
+];
+const LOGIN_COINS = [10, 15, 20, 25, 30, 40, 0]; // day 7 = mystery chest
 const AGES = [["","Not sure"],["0.5","Under 1 year"],["1","About 1 year"],["2","About 2 years"],["3","About 3 years"],["4","About 4 years"],["5","About 5 years"],["7","7+ years"],["10","10+ years"]];
 const FOODS = [
   ["Mango","yes"],["Banana","yes"],["Apple (no seeds)","yes"],["Coconut","yes"],["Strawberries","yes"],["Blueberries","yes"],
@@ -432,13 +651,13 @@ const FOOD_TXT = {yes:"Good", some:"Sometimes", no:"Avoid"};
 
 /* ---------- state ---------- */
 function newCrab(name, shell, color){
-  return {id:uid(), name, shell, color, since:dayKey(), created:Date.now(), ageAtGet:"", molting:false, moltStart:null, molts:[], shells:[], traits:[], skills:{speed:5,pinch:5,dig:5,climb:5,brave:5}, notes:""};
+  return {id:uid(), name, shell, color, since:dayKey(), created:Date.now(), ageAtGet:"", shellMM:"", growth:[], skins:{hat:"", gear:"", color:"", pattern:""}, molting:false, moltStart:null, molts:[], shells:[], traits:[], skills:{speed:5,pinch:5,dig:5,climb:5,brave:5}, notes:""};
 }
 function defaultState(){
   return {
     v:2,
     crabs:[newCrab("Mario","Spiked shell","#FF5A6E"), newCrab("Luigi","Striped shell","#3DDC84")],
-    checks:{}, weeklyLog:[], readings:[], feedings:[], photos:[],
+    checks:{}, weeklyLog:[], readings:[], feedings:[], photos:[], maint:[], logins:[], purchases:[], spares:[], bossHeals:{},
     shopping:["Solid lid","Spring water","Climbing branch","Crab food","Cuttlebone","Spray bottle"].map(t => ({id:uid(), text:t, done:false})),
     updated:0
   };
@@ -447,6 +666,8 @@ function normCrab(c){
   const d = newCrab(c.name || "Crab", c.shell || "", c.color || "#9B6BFF");
   return Object.assign(d, c, {
     created: Number(c.created) || Date.now(),
+    growth: Array.isArray(c.growth) ? c.growth.filter(g => g && g.day) : [],
+    skins: Object.assign({hat:"", gear:"", color:"", pattern:""}, c.skins || {}),
     molts: Array.isArray(c.molts) ? c.molts : [], shells: Array.isArray(c.shells) ? c.shells : [],
     traits: Array.isArray(c.traits) ? c.traits : [], skills: Object.assign({speed:5,pinch:5,dig:5,climb:5,brave:5}, c.skills || {})
   });
@@ -463,6 +684,11 @@ function normalize(s){
     feedings: Array.isArray(s.feedings) ? s.feedings.filter(f => f && f.food) : [],
     photos: Array.isArray(s.photos) ? s.photos.filter(p => p && p.id) : [],
     shopping: Array.isArray(s.shopping) ? s.shopping.filter(x => x && x.id) : d.shopping,
+    maint: Array.isArray(s.maint) ? s.maint.filter(m => m && m.id && m.day) : [],
+    bossHeals: s.bossHeals && typeof s.bossHeals === "object" ? s.bossHeals : {},
+    logins: Array.isArray(s.logins) ? s.logins.filter(l => l && l.day) : [],
+    purchases: Array.isArray(s.purchases) ? s.purchases.filter(x => x && x.id) : [],
+    spares: Array.isArray(s.spares) ? s.spares.filter(x => x && x.id) : [],
     updated: Number(s.updated) || 0
   };
 }
@@ -486,7 +712,7 @@ let state = (() => {
   } catch(e){}
   return defaultState();
 })();
-let assets = null, saveTimer = null, prevLevel = null;
+let bootDone = false, assets = null, saveTimer = null, prevLevel = null;
 
 function save(){
   state.updated = Date.now();
@@ -547,7 +773,7 @@ const CHALLENGES = [
   {id:"newfood", icon:"🥭", label:"Serve a food you haven't served in the last week", test:k => {
     const recent = new Set(state.feedings.filter(f => { const d = daysBetween(noon(dayKey(f.t)), noon(k)); return d >= 1 && d <= 7; }).map(f => f.food.toLowerCase().trim()));
     return feedsOn(k).some(f => !recent.has(f.food.toLowerCase().trim())); }},
-  {id:"photo", icon:"📸", label:"Snap a photo of one of your crabs", test:k => state.photos.some(p => p.day === k)},
+  {id:"photo", icon:"📸", label:"Snap a photo of one of your crabs", test:k => realPhotos().some(p => p.day === k)},
   {id:"early", icon:"⏰", label:"Finish all 5 daily quests before 6 PM", test:k => {
     const c = state.checks[k] || {}; return DAILY.every(t => typeof c[t.id] === "number" && new Date(c[t.id]).getHours() < 18); }},
   {id:"calcium", icon:"🦴", label:"Feed something with calcium (cuttlebone, eggshell, oyster shell)", test:k => feedsOn(k).some(f => CALCIUM.test(f.food))},
@@ -581,9 +807,28 @@ function activeDays(){
   const set = new Set(Object.keys(state.checks));
   state.readings.forEach(r => set.add(dayKey(r.t))); state.feedings.forEach(f => set.add(dayKey(f.t)));
   state.photos.forEach(p => set.add(p.day)); state.weeklyLog.forEach(w => set.add(w.day));
+  state.maint.forEach(m => set.add(m.day)); state.crabs.forEach(c => c.growth.forEach(g => set.add(g.day)));
   return [...set].sort();
 }
 
+
+/* weekly boss helpers */
+function weekStart(k){ const d = noon(k); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return dayKey(d); }
+function weekDays(ws){ const out = [], d = noon(ws); for (let i = 0; i < 7; i++) { out.push(dayKey(d)); d.setDate(d.getDate() + 1); } return out; }
+function bossFor(ws){ const w = Math.floor(dayNum(ws) / 7), n = BOSSES.length; return BOSSES[((w % n) + n) % n]; }
+function dmgOn(k, chDone){
+  const c = state.checks[k] || {};
+  let d = DAILY.filter(t => c[t.id]).length * 10 + (dayDone(k) ? 25 : 0);
+  d += state.weeklyLog.filter(w => w.day === k).length * 30;
+  d += Math.min(3, readingsOn(k).length) * 10 + Math.min(3, feedsOn(k).length) * 10 + Math.min(3, realPhotos().filter(p => p.day === k).length) * 15;
+  if (chDone) d += 40;
+  d += state.maint.filter(m => m.day === k).length * 60;
+  d += state.crabs.filter(cr => cr.growth.some(g => g.day === k)).length * 15;
+  return d;
+}
+const stickerById = id => STICKERS.find(x => x.id === id);
+const ownedStickers = () => new Set(STICKERS.filter(x => x.price === 0).map(x => x.id).concat(state.purchases.filter(p => stickerById(p.id)).map(p => p.id)));
+const realPhotos = () => state.photos.filter(p => !p.edit); // sticker edits don't count for XP
 /* everything below is computed from your logs, cached per save */
 let memo = {state:null, updated:-1, day:""};
 function stats(){
@@ -595,9 +840,25 @@ function stats(){
   let base = questsDone * 10 + perfect.length * 25 + state.weeklyLog.length * 20;
   base += perDayCapped(state.readings, r => dayKey(r.t), 3, 10);
   base += perDayCapped(state.feedings, f => dayKey(f.t), 3, 10);
-  base += perDayCapped(state.photos, p => p.day, 3, 15);
+  base += perDayCapped(realPhotos(), p => p.day, 3, 15);
   base += challengeDays.length * 30;
   state.crabs.forEach(c => { base += c.shells.length * 20 + c.molts.length * 75 + milestoneXP(c); });
+  base += state.maint.reduce((a, m) => a + ((MAINT.find(x => x.id === m.id) || {xp:0}).xp), 0);
+  let growthN = 0; state.crabs.forEach(c => { growthN += new Set(c.growth.map(g => g.day)).size; });
+  base += growthN * 15;
+  // bosses: every week you played, plus this week
+  const chSet = new Set(challengeDays), today = dayKey(), curWS = weekStart(today);
+  const weeks = new Set(days.map(weekStart)); weeks.add(curWS);
+  let defeated = 0, current = null;
+  [...weeks].sort().forEach(ws => {
+    const boss = bossFor(ws);
+    const wd = weekDays(ws).filter(k => k <= today);
+    const heals = wd.reduce((a, k) => a + (Number(state.bossHeals[k]) || 0), 0);
+    const dmg = Math.max(0, wd.reduce((a, k) => a + dmgOn(k, chSet.has(k)), 0) - heals);
+    const won = dmg >= boss.hp; if (won) defeated++;
+    if (ws === curWS) current = {ws, boss, dmg, won, heals, daysLeft:7 - weekDays(ws).indexOf(today)};
+  });
+  base += defeated * 300;
 
   // perfect calendar month
   const byMonth = {}; perfect.forEach(k => { const m = k.slice(0, 7); byMonth[m] = (byMonth[m] || 0) + 1; });
@@ -605,7 +866,7 @@ function stats(){
   // comeback: a perfect day after 3+ days with no activity
   const comeback = perfect.some(k => { const i = days.indexOf(k); return i > 0 && daysBetween(noon(days[i - 1]), noon(k)) >= 4; });
   // full house: quests + side quest + reading + feeding + photo on the same day
-  const fullHouse = perfect.some(k => state.weeklyLog.some(w => w.day === k) && readingsOn(k).length && feedsOn(k).length && state.photos.some(p => p.day === k));
+  const fullHouse = perfect.some(k => state.weeklyLog.some(w => w.day === k) && readingsOn(k).length && feedsOn(k).length && realPhotos().some(p => p.day === k));
   const earlyBird = Object.values(state.checks).some(c => c && DAILY.some(t => typeof c[t.id] === "number" && new Date(c[t.id]).getHours() < 7));
   // both crabs molting at once (overlapping molts, or both molting now)
   const spans = state.crabs.map(c => c.molts.map(m => [m.start, m.end]).concat(c.molting ? [[c.moltStart || dayKey(), dayKey()]] : []));
@@ -644,9 +905,9 @@ function stats(){
     ["swap25","🏠","Shell shopper","Log 25 shell changes",500, swaps >= 25,"e"],
     ["molt","🦀","Fresh armor","A crab finishes a molt",100, molts > 0,"r"],
     ["molt10","🛡️","Molt master","10 molts finished",1000, molts >= 10,"e"],
-    ["pic","📸","Paparazzi","Add a photo",25, state.photos.length > 0,"c"],
-    ["pic10","🖼️","Photo album","Add 10 photos",75, state.photos.length >= 10,"r"],
-    ["pic50","🎬","Documentary","Add 50 photos",300, state.photos.length >= 50,"e"],
+    ["pic","📸","Paparazzi","Add a photo",25, realPhotos().length > 0,"c"],
+    ["pic10","🖼️","Photo album","Add 10 photos",75, realPhotos().length >= 10,"r"],
+    ["pic50","🎬","Documentary","Add 50 photos",300, realPhotos().length >= 50,"e"],
     ["m1","🗓️","First month","Have a crab for 1 month",100, maxDays >= 30,"c"],
     ["y1","🎂","Anniversary","Have a crab for 1 year",500, maxDays >= 365,"r"],
     ["y4","🏛️","Veteran keeper","Have a crab for 4 years",1500, maxDays >= 1461,"e"],
@@ -656,7 +917,20 @@ function stats(){
     ["comeback","🔁","Comeback kid","???",150, comeback,"r",1],
     ["full","🃏","Full house","???",300, fullHouse,"e",1],
     ["double","👯","Double trouble","???",300, doubleMolt,"e",1],
-    ["fashion","👒","Fashionista","???",150, fashion,"r",1]
+    ["fashion","👒","Fashionista","???",150, fashion,"r",1],
+    ["boss1","⚔️","Boss slayer","Defeat a weekly boss",100, defeated >= 1,"r"],
+    ["boss10","🗡️","Boss hunter","Defeat 10 weekly bosses",1000, defeated >= 10,"e"],
+    ["boss52","🐲","Tank legend","Defeat 52 weekly bosses",5000, defeated >= 52,"l"],
+    ["deep","🧹","Spotless","Do a deep clean",50, state.maint.some(m => m.id === "deep"),"c"],
+    ["deep12","✨","Clean freak","Do 12 deep cleans",750, state.maint.filter(m => m.id === "deep").length >= 12,"e"],
+    ["grow","📏","Growing up","Log a crab's size or weight",50, growthN >= 1,"c"],
+    ["grow25","📈","Growth chart","Log 25 measurements",400, growthN >= 25,"r"],
+    ["stash","🗃️","Shell stash","Have 3 spare shells per crab",150, state.crabs.length > 0 && state.spares.length >= state.crabs.length * 3,"r"],
+    ["chest","🎁","Treasure hunter","Open a day-7 mystery chest",100, state.logins.some(l => l.chest),"r"],
+    ["login100","📆","Loyal keeper","Claim 100 daily rewards",1000, state.logins.length >= 100,"e"],
+    ["skin1","🎩","Dressed up","Save a photo with stickers",50, state.photos.some(p => p.edit),"c"],
+    ["skin10","🕶️","Sticker fan","Own 10 stickers",500, ownedStickers().size >= 10,"e"],
+    ["skinall","💎","Collector","Own every sticker",3000, STICKERS.every(x => ownedStickers().has(x.id)),"l"]
   ];
   const SECRET_HINT = {early:"Finish a quest before 7 AM", comeback:"Perfect day after 3+ days away", full:"Quests, side quest, reading, feeding & photo in one day",
     double:"Two crabs molting at the same time", fashion:"One crab wears 5 different shells"};
@@ -668,7 +942,13 @@ function stats(){
   list.push(["l25","🔱","Level 25","Reach keeper level 25",1000, lvl >= 25,"e"]);
   list.push(["l50","🐉","Level 50","Reach keeper level 50",5000, lvl >= 50,"l"]);
   const total = base + list.filter(t => t[5]).reduce((a, t) => a + t[4], 0);
-  const v = {list, total, questsDone, perfect:perfect.length, challenges:challengeDays.length, activeDays:days.length, foods, molts, swaps, bs};
+  const finalLevel = levelInfo(total).level;
+  let levelCoins = 0; for (let L = 2; L <= finalLevel; L++) levelCoins += 25 + 5 * (L - 1);
+  const loginCoins = state.logins.reduce((a, l) => a + (Number(l.coins) || 0), 0);
+  const spent = state.purchases.filter(x => stickerById(x.id)).reduce((a, x) => a + (Number(x.cost) || 0), 0);
+  const earnedCoins = levelCoins + defeated * 150 + loginCoins;
+  const v = {list, total, questsDone, perfect:perfect.length, challenges:challengeDays.length, activeDays:days.length, foods, molts, swaps, bs,
+    defeated, boss:current, growthN, coins:earnedCoins - spent, earnedCoins, spent, levelCoins};
   memo = {state, updated:state.updated, day:dayKey(), v};
   return v;
 }
@@ -699,25 +979,76 @@ function tankStats(){
   const water = (c.fresh ? 50 : 0) + (c.salt ? 50 : 0) || ((cy.fresh ? 25 : 0) + (cy.salt ? 25 : 0));
   return {hp, fed, water};
 }
-function crabXP(c){ return Math.max(0, daysSince(c.since)) * 3 + c.molts.length * 80 + c.shells.length * 25 + state.photos.filter(p => p.crab === c.id).length * 5; }
+function crabXP(c){ return Math.max(0, daysSince(c.since)) * 3 + c.molts.length * 80 + c.shells.length * 25 + realPhotos().filter(p => p.crab === c.id).length * 5; }
 const crabLevel = c => Math.floor(Math.sqrt(crabXP(c) / 12)) + 1;
 
 /* ---------- crab art (original design; shell pattern follows shell name) ---------- */
+// crab character art (original). Skins: hat, gear (cape/armor), shell color, shell pattern.
+let svgN = 0;
+const SHELL_COLORS = {ocean:"#4A90D9", lava:"#E0533B", neon:"#3DDC84", midnight:"#3A2F6B", gold:"#FFC83D"};
+const HATS = {
+  party:`<path d="M27 12 L37 -12 L47 12 Z" fill="#FF5A6E" stroke="#100C1C" stroke-width="1.5"/><path d="M31 3 L43 3 M34 -4 L40 -4" stroke="#FFC83D" stroke-width="2.5"/><circle cx="37" cy="-12" r="3.5" fill="#FFC83D"/>`,
+  cowboy:`<path d="M29 11 Q29 -3 37 -2 Q45 -3 45 11 Z" fill="#8B5A2B" stroke="#4A2E12" stroke-width="1.5"/><ellipse cx="37" cy="11" rx="17" ry="3.5" fill="#A0692F" stroke="#4A2E12" stroke-width="1.5"/><path d="M29.5 7 H44.5" stroke="#4A2E12" stroke-width="2.5"/>`,
+  pirate:`<path d="M21 11 Q37 -10 53 11 Q37 5 21 11 Z" fill="#1B1530" stroke="#EEE8FF" stroke-width="1.2"/><circle cx="37" cy="3" r="2.8" fill="#EEE8FF"/><path d="M34 7 L40 7" stroke="#EEE8FF" stroke-width="1.5"/>`,
+  wizard:`<path d="M28 11 L41 -16 L46 11 Z" fill="#3B4BC8" stroke="#100C1C" stroke-width="1.5"/><ellipse cx="37" cy="11" rx="14" ry="3" fill="#2A368F"/><path d="M38 0 l1.5 3 3 .4 -2.2 2 .6 3 -2.9-1.5 -2.9 1.5 .6-3 -2.2-2 3-.4z" fill="#FFC83D"/>`,
+  viking:`<path d="M27 12 A10 10 0 0 1 47 12 Z" fill="#9AA3B5" stroke="#4B5263" stroke-width="1.5"/><path d="M27 12 H47" stroke="#8B5A2B" stroke-width="3"/><path d="M28 6 Q18 4 19 -8 Q22 0 30 2 Z M46 6 Q56 4 55 -8 Q52 0 44 2 Z" fill="#F3E6C8" stroke="#8A7A58" stroke-width="1.2"/>`,
+  crown:`<path d="M27 12 V0 L32 6 L37 -4 L42 6 L47 0 V12 Z" fill="#FFC83D" stroke="#A87A00" stroke-width="1.5" stroke-linejoin="round"/><circle cx="32" cy="9" r="1.8" fill="#FF5A6E"/><circle cx="37" cy="8" r="2" fill="#4CC9F0"/><circle cx="42" cy="9" r="1.8" fill="#3DDC84"/>`,
+  diamond:`<path d="M26 12 V-1 L31.5 5 L37 -7 L42.5 5 L48 -1 V12 Z" fill="#9FE8FF" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round"/><path d="M37 -7 V12 M26 5 H48" stroke="#4CC9F0" stroke-width="1"/><path d="M52 -8 l1 3 3 1 -3 1 -1 3 -1 -3 -3 -1 3 -1z" fill="#fff"/>`
+};
+const CAPES = {
+  redcape:["#D7263D","#8E1020",""], herocape:["#2F5BD3","#FFC83D",`<path d="M22 72 l2 4 4 .5 -3 3 .8 4 -3.8-2 -3.8 2 .8-4 -3-3 4-.5z" fill="#FFC83D"/>`],
+  galaxycape:["#1B1340","#9B6BFF",`<circle cx="18" cy="70" r="1.2" fill="#fff"/><circle cx="26" cy="80" r="1" fill="#fff"/><circle cx="14" cy="82" r="1.4" fill="#4CC9F0"/><circle cx="32" cy="72" r=".9" fill="#fff"/>`]
+};
+const ARMOR = {
+  knight:`<ellipse cx="40" cy="58" rx="15.5" ry="13.5" fill="#A9B0C2" stroke="#5B6275" stroke-width="2"/><path d="M26 56 H54 M40 45 V71" stroke="#5B6275" stroke-width="1.5"/><circle cx="31" cy="51" r="1.3" fill="#5B6275"/><circle cx="49" cy="51" r="1.3" fill="#5B6275"/><circle cx="31" cy="64" r="1.3" fill="#5B6275"/><circle cx="49" cy="64" r="1.3" fill="#5B6275"/>`,
+  samurai:`<ellipse cx="40" cy="58" rx="15.5" ry="13.5" fill="#B3261E" stroke="#5E0F0B" stroke-width="2"/><path d="M26 52 H54 M25 58 H55 M26 64 H54" stroke="#FFC83D" stroke-width="1.6"/><path d="M33 46 V70 M40 45 V71 M47 46 V70" stroke="#5E0F0B" stroke-width="1" opacity=".6"/>`,
+  dragon:`<ellipse cx="40" cy="58" rx="15.5" ry="13.5" fill="#2E8B57" stroke="#14532D" stroke-width="2"/><path d="M28 52 q3 3 6 0 q3 3 6 0 q3 3 6 0 q3 3 6 0 M26 58 q3 3 6 0 q3 3 6 0 q3 3 6 0 q3 3 6 0 q3 3 6 0 M28 64 q3 3 6 0 q3 3 6 0 q3 3 6 0 q3 3 6 0" stroke="#9BE7B6" stroke-width="1.3" fill="none"/>`
+};
+function patternSVG(p, id){
+  if (p === "dots") return `<g fill="#FFFFFF" opacity=".8">${[[60,28],[74,26],[84,40],[66,42],[56,56],[78,56],[68,68],[88,54]].map(([x,y]) => `<circle cx="${x}" cy="${y}" r="3.2"/>`).join("")}</g>`;
+  if (p === "racing") return `<path d="M58 14 L50 80 M66 14 L58 80" stroke="#FFFFFF" stroke-width="4"/><path d="M62 14 L54 80" stroke="#100C1C" stroke-width="2"/>`;
+  if (p === "zigzag") return `<path d="M44 34 l8 -8 8 8 8 -8 8 8 8 -8 8 8 M44 52 l8 -8 8 8 8 -8 8 8 8 -8 8 8 M44 70 l8 -8 8 8 8 -8 8 8 8 -8 8 8" stroke="#100C1C" stroke-width="3" fill="none" opacity=".55"/>`;
+  if (p === "flames") return `<path d="M46 80 Q50 60 56 70 Q58 50 66 66 Q70 44 76 64 Q82 50 84 68 Q92 56 90 80 Z" fill="#FF8A3D"/><path d="M52 80 Q56 68 60 74 Q63 62 68 72 Q72 60 76 72 Q80 64 84 80 Z" fill="#FFC83D"/>`;
+  if (p === "stars") return `<g fill="#FFF3B0">${[[60,26,1],[78,32,1.3],[64,50,1.1],[84,52,.9],[70,66,1.2],[56,68,.8]].map(([x,y,k]) => `<path transform="translate(${x} ${y}) scale(${k})" d="M0 -5 l1.5 3.2 3.5 .5 -2.5 2.4 .6 3.5 -3.1-1.7 -3.1 1.7 .6-3.5 -2.5-2.4 3.5-.5z"/>`).join("")}</g>`;
+  if (p === "galaxy") return `<rect x="40" y="10" width="60" height="75" fill="#1B1340" opacity=".85"/><path d="M52 60 Q60 30 80 36 Q92 44 78 56 Q66 62 70 48" stroke="#9B6BFF" stroke-width="4" fill="none" opacity=".8"/>${[[58,24],[86,30],[62,70],[84,66],[74,20],[54,46]].map(([x,y]) => `<circle cx="${x}" cy="${y}" r="1.3" fill="#fff"/>`).join("")}`;
+  return "";
+}
 function crabSVG(c, mood){
+  const k = {}, id = "cs" + (++svgN);
   const col = c.color || "#9B6BFF", sh = (c.shell || "").toLowerCase();
-  const spikes = sh.includes("spik") ? `<path d="M58 20 l3 -9 l4 8 M70 22 l6 -8 l2 10 M80 32 l9 -4 l-3 9 M86 46 l9 1 l-6 7" fill="#E7C98F" stroke="#7A5A34" stroke-width="2" stroke-linejoin="round"/>` : "";
-  const stripes = sh.includes("strip") ? `<path d="M60 22 q-6 20 -8 44 M70 22 q2 22 -6 50 M80 30 q8 18 -2 42" stroke="#8B5A2B" stroke-width="5" fill="none" stroke-linecap="round"/>` : "";
+  const shellFill = k.color === "rainbow" ? `url(#rb-${id})` : (SHELL_COLORS[k.color] || "#D9B27A");
+  const shellPath = "M52 20 C82 14 96 42 84 64 C76 78 54 80 46 70 Z";
+  const spikes = sh.includes("spik") ? `<path d="M58 20 l3 -9 l4 8 M70 22 l6 -8 l2 10 M80 32 l9 -4 l-3 9 M86 46 l9 1 l-6 7" fill="${k.color ? shellFill : "#E7C98F"}" stroke="#7A5A34" stroke-width="2" stroke-linejoin="round"/>` : "";
+  const stripes = !k.pattern && sh.includes("strip") ? `<path d="M60 22 q-6 20 -8 44 M70 22 q2 22 -6 50 M80 30 q8 18 -2 42" stroke="#8B5A2B" stroke-width="5" fill="none" stroke-linecap="round"/>` : "";
+  const pattern = k.pattern ? `<g clip-path="url(#cl-${id})">${patternSVG(k.pattern, id)}</g>` : "";
   const mouth = mood === "sad" ? "M34 61 q6 -5 12 0" : "M34 58 q6 5 12 0";
-  return `<svg viewBox="0 0 100 90" aria-hidden="true">
-    ${spikes}<path d="M52 20 C82 14 96 42 84 64 C76 78 54 80 46 70 Z" fill="#D9B27A" stroke="#7A5A34" stroke-width="2.5"/>${stripes}
+  const cape = CAPES[k.gear] ? `<path d="M26 48 Q14 70 8 88 L40 86 Q46 66 52 50 Z" fill="${CAPES[k.gear][0]}" stroke="${CAPES[k.gear][1]}" stroke-width="2"/>${CAPES[k.gear][2]}` : "";
+  const armor = ARMOR[k.gear] || "";
+  return `<svg viewBox="0 -18 100 108" aria-hidden="true"><defs>
+      <clipPath id="cl-${id}"><path d="${shellPath}"/></clipPath>
+      <linearGradient id="rb-${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF5A6E"/><stop offset=".25" stop-color="#FFC83D"/><stop offset=".5" stop-color="#3DDC84"/><stop offset=".75" stop-color="#4CC9F0"/><stop offset="1" stop-color="#9B6BFF"/></linearGradient></defs>
+    ${cape}${spikes}<path d="${shellPath}" fill="${shellFill}" stroke="#7A5A34" stroke-width="2.5"/>${stripes}${pattern}
     <g stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".85">
       <line x1="36" y1="70" x2="22" y2="84"/><line x1="42" y1="72" x2="34" y2="86"/><line x1="48" y1="72" x2="46" y2="87"/>
       <line x1="34" y1="44" x2="30" y2="22"/><line x1="42" y1="44" x2="44" y2="20"/></g>
     <circle cx="30" cy="20" r="5" fill="#100C1C"/><circle cx="44" cy="18" r="5" fill="#100C1C"/>
     <circle cx="31.5" cy="18.5" r="1.6" fill="#fff"/><circle cx="45.5" cy="16.5" r="1.6" fill="#fff"/>
-    <ellipse cx="40" cy="58" rx="16" ry="14" fill="#8E4BB8"/>
+    <ellipse cx="40" cy="58" rx="16" ry="14" fill="#8E4BB8"/>${armor}
     <path d="M26 58 C8 52 6 72 20 74 C28 75 32 68 30 62 Z" fill="#6B2E8F"/>
-    <path d="${mouth}" stroke="#100C1C" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`;
+    <path d="${mouth}" stroke="#100C1C" stroke-width="2.5" fill="none" stroke-linecap="round"/>${HATS[k.hat] || ""}</svg>`;
+}
+const STICKER_ART = {
+  heart:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 36"><path d="M20 34 C4 22 0 14 4 8 C8 2 16 3 20 10 C24 3 32 2 36 8 C40 14 36 22 20 34 Z" fill="#FF5A6E" stroke="#fff" stroke-width="2"/></svg>`,
+  sparkle:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><path d="M16 2 L19 13 L30 16 L19 19 L16 30 L13 19 L2 16 L13 13 Z" fill="#FFC83D"/><path d="M31 22 L33 28 L39 30 L33 32 L31 38 L29 32 L23 30 L29 28 Z" fill="#fff"/></svg>`,
+  bowtie:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 24"><path d="M22 12 L3 2 V22 Z M22 12 L41 2 V22 Z" fill="#D7263D" stroke="#5E0F0B" stroke-width="1.5" stroke-linejoin="round"/><rect x="18" y="7" width="8" height="10" rx="2" fill="#B31B2E" stroke="#5E0F0B" stroke-width="1.5"/></svg>`,
+  shades:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 22"><path d="M2 4 H58" stroke="#100C1C" stroke-width="3"/><path d="M4 4 H26 V10 Q26 20 15 20 Q4 20 4 10 Z M34 4 H56 V10 Q56 20 45 20 Q34 20 34 10 Z" fill="#100C1C"/><path d="M8 7 L14 7 M38 7 L44 7" stroke="#fff" stroke-width="2" opacity=".6"/></svg>`,
+  fire:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 44"><path d="M18 2 Q30 14 30 26 Q30 42 18 42 Q6 42 6 28 Q6 20 12 14 Q12 22 16 22 Q12 12 18 2 Z" fill="#FF8A3D"/><path d="M18 18 Q25 26 24 33 Q23 40 18 40 Q12 40 12 33 Q12 28 16 24 Q16 30 19 29 Q16 24 18 18 Z" fill="#FFC83D"/></svg>`
+};
+function stickerSVG(id){
+  if (STICKER_ART[id]) return STICKER_ART[id];
+  if (HATS[id]) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="17 -19 40 33">${HATS[id]}</svg>`;
+  if (CAPES[id]) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="4 44 52 48">${`<path d="M26 48 Q14 70 8 88 L40 86 Q46 66 52 50 Z" fill="${CAPES[id][0]}" stroke="${CAPES[id][1]}" stroke-width="2"/>${CAPES[id][2]}`}</svg>`;
+  return "";
 }
 const BLANK = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 const photoURLs = {};
@@ -767,8 +1098,43 @@ function avatarFor(c){
   return pid ? `<img src="${photoURL(pid)}" alt="${esc(c.name)}">` : crabSVG(c, c.molting ? "sad" : "happy");
 }
 
+/* ---------- growth, spares, login, maintenance helpers ---------- */
+function growthChart(c){
+  const pts = c.growth.filter(g => g.g !== "" && g.g != null && isFinite(g.g));
+  if (pts.length < 2) return "";
+  const vals = pts.map(g => Number(g.g)), min = Math.min(...vals), max = Math.max(...vals), W = 300, H = 70, p = 6;
+  const span = max - min || 1;
+  const x = i => p + i * (W - 2 * p) / (vals.length - 1), y = v => H - p - (v - min) / span * (H - 2 * p);
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Weight over time" style="margin-top:8px">
+    <polyline points="${vals.map((v, i) => x(i).toFixed(1) + "," + y(v).toFixed(1)).join(" ")}" fill="none" stroke="${esc(c.color)}" stroke-width="2.5"/>
+    ${vals.map((v, i) => `<rect x="${(x(i) - 3).toFixed(1)}" y="${(y(v) - 3).toFixed(1)}" width="6" height="6" fill="${esc(c.color)}"/>`).join("")}
+    <text x="${W - 4}" y="12" text-anchor="end" font-size="11" fill="var(--muted)">${min}–${max} g</text></svg>`;
+}
+function fitTag(spare, crab){
+  const a = Number(spare.mm), b = Number(crab.shellMM);
+  if (!a || !b) return "";
+  if (a < b) return `<span class="fit small">too small for ${esc(crab.name)}</span>`;
+  if (a <= b * 1.35) return `<span class="fit ok">fits ${esc(crab.name)}</span>`;
+  return `<span class="fit big">roomy for ${esc(crab.name)}</span>`;
+}
+function loginStatus(){
+  const k = dayKey(), last = state.logins[state.logins.length - 1];
+  if (last && last.day === k) return {claimed:true, n:last.n};
+  const n = last && daysBetween(noon(last.day), noon(k)) === 1 ? (last.n % 7) + 1 : 1;
+  return {claimed:false, n};
+}
+function maintStatus(t){
+  const logs = state.maint.filter(m => m.id === t.id).map(m => m.day).sort(), last = logs[logs.length - 1];
+  if (!last) return {due:true, last:null, text:"Never done"};
+  const ago = daysSince(last), left = t.every - ago;
+  if (ago === 0) return {due:false, last, text:"Done today"};
+  return left <= 0 ? {due:true, last, text:`Last done ${ago} days ago, due now`} : {due:false, last, text:`Last done ${ago} days ago, next in ${left} days`};
+}
+function showReward(icon, title, text, html){ if (html) $("rwIcon").innerHTML = `<div style="width:130px;margin:0 auto" class="bossmini">${html}</div>`; else $("rwIcon").textContent = icon; $("rwTitle").textContent = title; $("rwText").textContent = text; $("reward").classList.add("show"); setTimeout(() => $("rwClose").focus(), 50); }
+$("rwClose").onclick = () => $("reward").classList.remove("show");
+
 /* ---------- render ---------- */
-function render(){ renderHUD(); renderQuests(); renderCrabs(); renderTank(); renderFood(); renderTrophies(); }
+function render(){ renderHUD(); renderQuests(); renderCrabs(); renderTank(); renderFood(); renderTrophies(); renderBattle(); }
 
 function renderHUD(){
   const xp = totalXP(), L = levelInfo(xp), s = streak(), got = trophyList().filter(t => t[5]).length;
@@ -781,7 +1147,7 @@ function renderHUD(){
     <div class="xpbar" role="progressbar" aria-valuemin="0" aria-valuemax="${L.next}" aria-valuenow="${L.into}" aria-label="XP to next level"><i style="width:${(L.into / L.next * 100).toFixed(1)}%"></i></div>
     <div class="row between small muted" style="margin-top:4px"><span>${L.into.toLocaleString()} / ${L.next.toLocaleString()} XP</span><span>${xp.toLocaleString()} total</span></div>
     ${nt ? `<div class="small muted" style="margin-top:4px">New mystery title at LV ${nt[0]}: <b style="color:var(--text)">???</b></div>` : `<div class="small" style="margin-top:4px;color:var(--tier)">Max rank reached. You are the Supreme Overlord.</div>`}
-    <div class="hudstats"><div><b>🔥 ${s}</b><span>day streak</span></div><div><b>${bestStreak()}</b><span>best streak</span></div><div><b>🏆 ${got}</b><span>trophies</span></div></div>`;
+    <div class="hudstats"><div><b>🔥 ${s}</b><span>day streak</span></div><div><b style="color:var(--gold)">🪙 ${Math.max(0, stats().coins).toLocaleString()}</b><span>coins</span></div><div><b>🏆 ${got}</b><span>trophies</span></div></div>`;
   let seen = 0; try { seen = Number(localStorage.getItem("crab-keeper-seen-level")) || 0; } catch(e){}
   if (prevLevel !== null && L.level > prevLevel && L.level > seen) {
     try { localStorage.setItem("crab-keeper-seen-level", String(L.level)); } catch(e){}
@@ -807,6 +1173,34 @@ function renderQuests(){
       <span class="grow"><span>${t.label}</span><span class="sub">${t.sub}</span><span class="sub ${st.due ? "due" : "ok"}">${st.text}</span></span><span class="xp px">+20</span></button>`;
   }).join("");
 
+  // daily login reward
+  const ls = loginStatus(), cycleStart = ls.claimed ? ls.n : ls.n - 1;
+  $("login").innerHTML = `<div class="row between"><h3 style="margin:0">Daily reward</h3><span class="muted small">Day ${ls.n} of 7</span></div>
+    <div class="days">${LOGIN_COINS.map((c, i) => { const n = i + 1;
+      const cls = n < ls.n || (ls.claimed && n === ls.n) ? "got" : n === ls.n ? "now" : "";
+      return `<div class="d ${cls}"><b>${n === 7 ? "🎁" : "🪙"}</b>${n === 7 ? "Chest" : c}</div>`; }).join("")}</div>
+    ${ls.claimed ? `<p class="muted small" style="margin:0">Claimed! Come back tomorrow for day ${ls.n % 7 + 1}. Miss a day and it resets to day 1.</p>`
+      : `<button class="btn gold" data-claim="1" style="width:100%">${ls.n === 7 ? "Open mystery chest" : "Claim " + LOGIN_COINS[ls.n - 1] + " coins"}</button>`}`;
+
+  // weekly boss
+  const st = stats(), b = st.boss;
+  if (b) {
+    const left = Math.max(0, b.boss.hp - b.dmg), pct = Math.round(left / b.boss.hp * 100);
+    $("boss").className = "panel boss" + (b.won ? " won" : "");
+    $("boss").innerHTML = `<div class="row between"><h3 style="margin:0">Weekly boss</h3><span class="muted small">${b.won ? "Defeated" : b.daysLeft + " day" + (b.daysLeft === 1 ? "" : "s") + " left"}</span></div>
+      <div class="row" style="margin-top:10px;gap:14px"><div class="bossicon bossmini" aria-hidden="true">${bossCrabSVG(b.boss)}</div>
+        <div class="grow"><b style="font-size:20px">${b.boss.name}</b><div class="muted small">${b.boss.lore}</div></div></div>
+      <div class="hpbar" role="progressbar" aria-label="Boss HP" aria-valuemin="0" aria-valuemax="${b.boss.hp}" aria-valuenow="${left}"><i style="width:${pct}%"></i></div>
+      <div class="row between small" style="margin-top:4px"><span class="muted">HP ${left} / ${b.boss.hp}</span><span class="muted">You've dealt ${b.dmg}</span></div>
+      ${b.won ? "" : `<button class="btn" data-fight="1" style="width:100%;margin-top:10px;background:var(--bad);border-color:var(--bad)">⚔️ Enter the battle</button>`}
+      <p class="small" style="margin:8px 0 0;color:${b.won ? "var(--good)" : "var(--muted)"}">${b.won ? "💀 Beaten! +300 XP and +150 coins. A new boss shows up Monday." : "Every care task hits it. Quests 10, perfect day 25, side quest 30, challenge 40, deep clean 60. Beat it by Sunday for 300 XP + 150 coins."}</p>`;
+    let seenBoss = ""; try { seenBoss = localStorage.getItem("crab-keeper-boss-seen") || ""; } catch(e){}
+    if (b.won && seenBoss !== b.ws) {
+      try { localStorage.setItem("crab-keeper-boss-seen", b.ws); } catch(e){}
+      if (bootDone) { const show = () => showReward("", "Boss defeated", `${b.boss.name} is down! +300 XP and +150 coins`, bossCrabSVG(b.boss)); if (battleOpen) setTimeout(show, 1800); else show(); }
+    }
+  }
+
   const ch = challengeFor(k), chDone = ch.test(k);
   $("challenge").className = "panel challenge" + (chDone ? " done" : "");
   $("challenge").innerHTML = `<div class="row between"><h3 style="margin:0">Daily challenge</h3><span class="xp px" style="font-size:10px;color:${chDone ? "var(--good)" : "var(--gold)"}">${chDone ? "Done" : "+30 XP"}</span></div>
@@ -826,6 +1220,7 @@ function renderQuests(){
     if (!humOk(r.hum)) out.push(`<div class="alert"><b>Humidity is ${r.hum}%</b>${r.hum < 70 ? "Too dry. Mist the substrate and coconut fiber and keep the lid on." : "Too wet. Crack the lid a little so mold doesn't grow."}</div>`);
     if (hrs > 24) out.push(`<div class="note"><b>No reading in ${Math.floor(hrs / 24)} day${hrs >= 48 ? "s" : ""}</b>Check your gauge and log it in Tank.</div>`);
   }
+  MAINT.forEach(t => { const m = maintStatus(t); if (m.due && m.last) out.push(`<div class="note"><b>${t.label} is due</b>${m.text}. Find it in the Tank tab.</div>`); });
   state.crabs.filter(x => x.molting).forEach(m => {
     out.push(`<div class="note"><b>${esc(m.name)} is molting, day ${daysSince(m.moltStart || k) + 1}</b>Don't dig. Keep food and both waters topped up.</div>`);
   });
@@ -881,11 +1276,22 @@ function renderCrabs(){
       </div>
       <details><summary>History, notes & settings</summary>
         <h3 style="margin-top:8px">Shell history</h3><ul class="list small">${shellHist || `<li class="muted">No shell changes logged yet.</li>`}</ul>
+        <h3 style="margin-top:10px">Growth log</h3>
+        <p class="muted small" style="margin:0 0 6px">Weigh on a kitchen scale in grams and measure with a ruler in mm. Measure the same way every time (like shell opening width). Skip while molting, since they're soft.</p>
+        <div class="row">
+          <input type="number" id="gw-${c.id}" inputmode="decimal" step="0.1" placeholder="grams" aria-label="Weight in grams">
+          <input type="number" id="gs-${c.id}" inputmode="decimal" step="0.5" placeholder="mm" aria-label="Size in mm">
+          <button class="btn small" data-grow="${c.id}">Save</button>
+        </div>
+        ${growthChart(c)}
+        <ul class="list small">${c.growth.slice().reverse().slice(0, 6).map(g => `<li class="row between"><span>${g.g !== "" && g.g != null ? g.g + " g" : "—"} · ${g.mm !== "" && g.mm != null ? g.mm + " mm" : "—"}</span>
+          <span class="row"><span class="muted small">${fmtDay(g.day)}</span><button class="btn ghost small" data-delgrow="${c.id}|${g.t}" aria-label="Delete measurement">✕</button></span></li>`).join("") || `<li class="muted">No measurements yet.</li>`}</ul>
         <h3 style="margin-top:10px">Molts</h3><ul class="list small">${moltHist || `<li class="muted">No finished molts yet.</li>`}</ul>
         <label class="f" for="notes-${c.id}" style="margin-top:10px">Notes</label>
         <textarea id="notes-${c.id}" data-notes="${c.id}" placeholder="Personality, favorite foods, funny moments">${esc(c.notes)}</textarea>
         <div class="grid2" style="margin-top:8px">
           <div><label class="f" for="since-${c.id}">Got on</label><input type="date" id="since-${c.id}" data-since="${c.id}" value="${esc(c.since)}" min="${minSince(c)}" max="${dayKey()}"></div>
+          <div><label class="f" for="mm-${c.id}">Shell opening (mm)</label><input type="number" id="mm-${c.id}" data-shellmm="${c.id}" inputmode="decimal" step="0.5" value="${esc(c.shellMM || "")}" placeholder="e.g. 12"></div>
           <div><label class="f" for="age-${c.id}">Age when you got it</label><select id="age-${c.id}" data-age="${c.id}">
             ${AGES.map(([v, n]) => `<option value="${v}" ${String(c.ageAtGet) === v ? "selected" : ""}>${n}</option>`).join("")}</select></div>
           <div><label class="f" for="color-${c.id}">Card color</label><select id="color-${c.id}" data-color="${c.id}">
@@ -898,6 +1304,12 @@ function renderCrabs(){
   }).join("") || `<p class="muted">No crabs yet.</p>`;
 
   if (!$("gview").hidden && galleryCrab) renderGallery();
+  const goal = state.crabs.length * 3;
+  $("spareCount").innerHTML = `<b style="color:${state.spares.length >= goal ? "var(--good)" : "var(--gold)"}">${state.spares.length} / ${goal}</b>`;
+  $("spareList").innerHTML = state.spares.map(x => `<div class="row between" style="padding:8px 0;border-bottom:1px dashed var(--line)">
+      <span class="grow">🐚 ${esc(x.desc)}${x.mm ? ` <span class="muted small">${esc(x.mm)} mm</span>` : ""}<br>${state.crabs.map(c => fitTag(x, c)).join("")}</span>
+      <button class="btn ghost small" data-delspare="${x.id}" aria-label="Remove ${esc(x.desc)}">✕</button></div>`).join("")
+    || `<p class="muted small">No spare shells logged yet.</p>`;
 }
 
 function chartSVG(vals, lo, hi, min, max, color){
@@ -918,6 +1330,9 @@ function renderTank(){
     <div><div class="big">${r.temp}<small>°F</small></div><span class="tag ${tempOk(r.temp) ? "" : "bad"}">${tempOk(r.temp) ? "Good" : r.temp < 75 ? "Too cold" : "Too hot"}</span></div>
     <div><div class="big">${r.hum}<small>%</small></div><span class="tag ${humOk(r.hum) ? "" : "bad"}">${humOk(r.hum) ? "Good" : r.hum < 70 ? "Too dry" : "Too wet"}</span></div>
     <div class="muted small" style="margin-left:auto;text-align:right">${fmtTime(r.t)}</div>` : `<p class="muted">No readings yet.</p>`;
+  $("maint").innerHTML = MAINT.map(t => { const m = maintStatus(t), today = state.maint.some(x => x.id === t.id && x.day === dayKey());
+    return `<button class="quest" data-maint="${t.id}" aria-pressed="${today}"><span class="box"></span><span class="grow"><span>${t.label}</span>
+      <span class="sub">${t.sub}</span><span class="sub ${m.due && !today ? "due" : "ok"}">${m.text}${t.every >= 180 ? " (every 6 months)" : " (every 30 days)"}</span></span><span class="xp px">+${t.xp}</span></button>`; }).join("");
   const last = state.readings.slice(-14);
   $("tempChart").innerHTML = chartSVG(last.map(x => x.temp), 75, 85, 65, 95, "var(--gold)");
   $("humChart").innerHTML = chartSVG(last.map(x => x.hum), 70, 80, 40, 100, "var(--cyan)");
@@ -963,7 +1378,8 @@ function renderTrophies(){
   $("records").innerHTML = [
     [st.questsDone, "quests done"], [st.perfect, "perfect days"], [st.bs, "best streak"], [st.challenges, "challenges beaten"],
     [st.activeDays, "days played"], [state.readings.length, "readings"], [st.foods, "different meals"], [st.molts, "molts"],
-    [st.swaps, "shell changes"], [state.photos.length, "photos"]
+    [st.swaps, "shell changes"], [realPhotos().length, "photos"], [st.defeated, "bosses beaten"], [st.earnedCoins, "coins earned"],
+    [state.logins.length, "rewards claimed"], [st.growthN, "measurements"]
   ].map(([n, l]) => `<div><b>${Number(n).toLocaleString()}</b><span>${l}</span></div>`).join("");
 }
 
@@ -991,14 +1407,7 @@ document.addEventListener("click", e => {
   } else if (ds.trait) {
     const [id, t] = ds.trait.split("|"), c = findCrab(id);
     if (c) { c.traits = c.traits.includes(t) ? c.traits.filter(x => x !== t) : c.traits.concat(t); save(); }
-  } else if (ds.swap) {
-    const c = findCrab(ds.swap); if (!c) return;
-    const note = prompt(`What does ${c.name}'s new shell look like?`, "");
-    if (note === null) return;
-    c.shells.push({day:k, note:note.trim().slice(0, 40)});
-    if (note.trim()) c.shell = note.trim().slice(0, 30);
-    c.needsPic = true;
-    save(); xpToast(before, `${c.name} moved into a new shell`);
+  } else if (ds.swap) { openSwap(ds.swap);
   } else if (ds.molt) {
     const c = findCrab(ds.molt); if (!c) return;
     if (c.molting) { c.molts.push({start:c.moltStart || k, end:k}); c.molting = false; c.moltStart = null; save(); xpToast(before, `Welcome back, ${c.name}!`); }
@@ -1009,13 +1418,36 @@ document.addEventListener("click", e => {
   } else if (ds.photo) { pickPhoto(ds.photo, false); }
   else if (ds.pfpic) { if (assets) pickPhoto(ds.pfpic, true); else toast("Photos aren't available in this browser"); }
   else if (ds.gallery) { openGallery(ds.gallery); }
+  else if (ds.claim) { claimLogin(); }
+  else if (ds.fight) { openBattle(); }
+  else if (ds.maint) {
+    const t = MAINT.find(x => x.id === ds.maint); if (!t) return;
+    const i = state.maint.findIndex(m => m.id === t.id && m.day === k);
+    if (i >= 0) { state.maint.splice(i, 1); save(); return; }
+    if (t.id === "substrate" && state.crabs.some(c => c.molting) && !confirm("A crab is molting underground! Changing the substrate could hurt it. Only continue if you're sure it's safe.")) return;
+    state.maint.push({id:t.id, day:k}); save(); xpToast(before, `${t.label} done`);
+  } else if (ds.grow) {
+    const c = findCrab(ds.grow); if (!c) return;
+    if (c.molting) { toast(`Don't handle ${c.name} while molting`); return; }
+    const g = $("gw-" + c.id).value.trim(), mm = $("gs-" + c.id).value.trim();
+    const gv = g === "" ? "" : parseFloat(g), mv = mm === "" ? "" : parseFloat(mm);
+    if (gv === "" && mv === "") { toast("Enter grams, mm, or both"); return; }
+    if (gv !== "" && (!isFinite(gv) || gv <= 0 || gv > 500)) { toast("Weight should be between 0 and 500 g"); return; }
+    if (mv !== "" && (!isFinite(mv) || mv <= 0 || mv > 200)) { toast("Size should be between 0 and 200 mm"); return; }
+    c.growth.push({day:k, t:Date.now(), g:gv === "" ? "" : Math.round(gv * 10) / 10, mm:mv === "" ? "" : Math.round(mv * 10) / 10});
+    save(); xpToast(before, `Measurement saved for ${c.name}`);
+  } else if (ds.delgrow) {
+    const [id, t] = ds.delgrow.split("|"), c = findCrab(id); if (!c) return;
+    c.growth = c.growth.filter(g => String(g.t) !== t); save();
+  } else if (ds.delspare) { state.spares = state.spares.filter(x => x.id !== ds.delspare); save(); }
+  else if (ds.useshell) { finishSwap(ds.useshell); }
   else if (ds.view) { openViewer(ds.view); }
   else if (ds.tab) { showTab(ds.tab); }
 });
 
 document.addEventListener("change", e => {
   const t = e.target, ds = t.dataset;
-  const id = ds.name || ds.shell || ds.since || ds.notes || ds.color || ds.age; if (!id) return;
+  const id = ds.name || ds.shell || ds.since || ds.notes || ds.color || ds.age || ds.shellmm; if (!id) return;
   const c = findCrab(id); if (!c) return;
   if (ds.name) c.name = t.value.trim() || c.name;
   if (ds.shell !== undefined) c.shell = t.value.trim();
@@ -1029,6 +1461,7 @@ document.addEventListener("change", e => {
     return;
   }
   if (ds.age !== undefined) c.ageAtGet = t.value;
+  if (ds.shellmm !== undefined) { const v = parseFloat(t.value); c.shellMM = isFinite(v) && v > 0 && v < 200 ? Math.round(v * 10) / 10 : ""; }
   if (ds.notes !== undefined) c.notes = t.value;
   if (ds.color) c.color = t.value;
   t.blur(); save();
@@ -1065,7 +1498,7 @@ function renderGallery(){
   $("gSub").textContent = ps.length ? `${ps.length} photo${ps.length === 1 ? "" : "s"}. Tap one to see it big or make it the profile pic.` : "No photos yet. Add the first one!";
   $("gAdd").hidden = $("gProfile").hidden = !assets;
   $("gGrid").innerHTML = ps.map(p => `<button class="ph" data-view="${esc(p.id)}" style="--pc:${esc(c.color)}" aria-label="Photo from ${fmtDay(p.day)}">
-    <img src="${photoURL(p.id)}" alt="" loading="lazy">${p.id === pf ? `<b class="pf">Profile</b>` : ""}<span>${fmtDay(p.day)}${p.shell ? " · " + esc(p.shell) : ""}</span></button>`).join("");
+    <img src="${photoURL(p.id)}" alt="" loading="lazy">${p.id === pf ? `<b class="pf">Profile</b>` : ""}<span>${p.edit ? "✨ " : ""}${fmtDay(p.day)}${p.shell ? " · " + esc(p.shell) : ""}</span></button>`).join("");
 }
 $("gClose").onclick = () => { $("gview").hidden = true; galleryCrab = null; };
 $("gAdd").onclick = () => { if (galleryCrab) pickPhoto(galleryCrab, false); };
@@ -1110,7 +1543,7 @@ function openViewer(id){
   const c = findCrab(p.crab); viewing = id;
   $("vImg").src = photoURL(id); $("vImg").alt = c ? c.name : "Crab photo";
   $("vCap").textContent = `${c ? c.name : "Crab"} · ${fmtDay(p.day)}${p.shell ? " · " + p.shell : ""}`;
-  $("vDel").hidden = !assets; $("vSetPf").hidden = !c || profileOf(c) === id;
+  $("vDel").hidden = !assets; $("vSetPf").hidden = !c || profileOf(c) === id; $("vStk").hidden = !assets;
   $("viewer").hidden = false; $("vClose").focus();
 }
 $("vClose").onclick = () => { $("viewer").hidden = true; viewing = null; };
@@ -1128,8 +1561,409 @@ $("vDel").onclick = async () => {
   try { if (assets) await assets.delete(id); } catch(e){}
 };
 document.addEventListener("keydown", e => { if (e.key !== "Escape") return;
-  if (!$("viewer").hidden) $("viewer").hidden = true; else if (!$("gview").hidden) { $("gview").hidden = true; galleryCrab = null; }
+  if (battleOpen) { closeBattle(); return; }
+  if (!$("stk").hidden) closeStickers(); else if (!$("viewer").hidden) $("viewer").hidden = true; else if (!$("gview").hidden) { $("gview").hidden = true; galleryCrab = null; }
+  else if (!$("sview").hidden) { $("sview").hidden = true; swapCrab = null; }
+  $("reward").classList.remove("show");
   $("levelup").classList.remove("show"); });
+
+/* ---------- sticker editor ---------- */
+let stkPhoto = null, stkItems = [], stkSel = null;
+const pointers = new Map(); let gesture = null;
+function openStickers(photoId){
+  const p = state.photos.find(x => x.id === photoId); if (!p) return;
+  stkPhoto = p; stkItems = []; stkSel = null;
+  $("stkImg").src = photoURL(p.id);
+  const c = findCrab(p.crab); $("stkTitle").textContent = c ? `Stickers for ${c.name}` : "Stickers";
+  $("viewer").hidden = true; $("stk").hidden = false;
+  renderTray(); drawStickers();
+}
+function renderTray(){
+  const owned = ownedStickers(), coins = Math.max(0, stats().coins);
+  $("stkCoins").textContent = `🪙 ${coins.toLocaleString()}`;
+  $("tray").innerHTML = STICKERS.map(x => { const has = owned.has(x.id);
+    return `<button data-stk="${x.id}" class="${has ? "" : "locked"}" aria-label="${esc(x.name)}${has ? "" : ", costs " + x.price + " coins"}">${stickerSVG(x.id)}${has ? esc(x.name) : `<span class="price">🪙 ${x.price}</span>`}</button>`; }).join("");
+}
+function stageSize(){ const r = $("stage").getBoundingClientRect(); return {w:r.width || 1, h:r.height || 1}; }
+function drawStickers(){
+  $("stage").querySelectorAll(".stk-item").forEach(e => e.remove());
+  const {w, h} = stageSize();
+  stkItems.forEach(it => {
+    const el = document.createElement("div"); el.className = "stk-item" + (it === stkSel ? " sel" : ""); el.dataset.sid = it.uid;
+    const px = it.s * w; el.style.width = px + "px";
+    el.innerHTML = stickerSVG(it.id);
+    el.style.transform = `translate(${it.x * w - px / 2}px, ${it.y * h - px / 2}px) rotate(${it.r}deg) scaleX(${it.flip ? -1 : 1})`;
+    $("stage").appendChild(el);
+  });
+  ["stkSmall","stkBig","stkRotL","stkRotR","stkFlip","stkDel"].forEach(id => { $(id).disabled = !stkSel; });
+}
+function addSticker(id){
+  const it = {uid:uid(), id, x:.5, y:.4, s:.35, r:0, flip:false};
+  stkItems.push(it); stkSel = it; drawStickers();
+}
+$("tray").addEventListener("click", e => {
+  const b = e.target.closest("[data-stk]"); if (!b) return;
+  const x = stickerById(b.dataset.stk); if (!x) return;
+  if (!ownedStickers().has(x.id)) {
+    const coins = stats().coins;
+    if (coins < x.price) { toast(`You need ${x.price - Math.max(0, coins)} more coins for the ${x.name}`); return; }
+    if (!confirm(`Buy the ${x.name} sticker for ${x.price} coins?`)) return;
+    state.purchases.push({id:x.id, cost:x.price, day:dayKey()}); save(); renderTray(); toast(`Unlocked ${x.name}!`);
+  }
+  addSticker(x.id);
+});
+function nudge(fn){ if (stkSel) { fn(stkSel); drawStickers(); } }
+$("stkSmall").onclick = () => nudge(it => it.s = clamp(it.s / 1.15, .06, 1.5));
+$("stkBig").onclick = () => nudge(it => it.s = clamp(it.s * 1.15, .06, 1.5));
+$("stkRotL").onclick = () => nudge(it => it.r -= 15);
+$("stkRotR").onclick = () => nudge(it => it.r += 15);
+$("stkFlip").onclick = () => nudge(it => it.flip = !it.flip);
+$("stkDel").onclick = () => { if (!stkSel) return; stkItems = stkItems.filter(x => x !== stkSel); stkSel = null; drawStickers(); };
+// drag with one finger, pinch/rotate with two
+$("stage").addEventListener("pointerdown", e => {
+  const el = e.target.closest(".stk-item");
+  if (el) { stkSel = stkItems.find(x => x.uid === el.dataset.sid) || stkSel; }
+  else if (pointers.size === 0) { stkSel = null; drawStickers(); return; }
+  if (!stkSel) return;
+  $("stage").setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+  startGesture(); drawStickers(); e.preventDefault();
+});
+function startGesture(){
+  const pts = [...pointers.values()];
+  gesture = {it:stkSel, x:stkSel.x, y:stkSel.y, s:stkSel.s, r:stkSel.r, p0:pts.map(p => ({...p}))};
+}
+$("stage").addEventListener("pointermove", e => {
+  if (!pointers.has(e.pointerId) || !gesture) return;
+  pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+  const pts = [...pointers.values()], {w, h} = stageSize(), g = gesture, it = g.it;
+  if (pts.length === 1 && g.p0.length === 1) {
+    it.x = clamp(g.x + (pts[0].x - g.p0[0].x) / w, 0, 1); it.y = clamp(g.y + (pts[0].y - g.p0[0].y) / h, 0, 1);
+  } else if (pts.length >= 2 && g.p0.length >= 2) {
+    const d = (a, b) => Math.hypot(b.x - a.x, b.y - a.y) || 1, ang = (a, b) => Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
+    it.s = clamp(g.s * d(pts[0], pts[1]) / d(g.p0[0], g.p0[1]), .06, 1.5);
+    it.r = g.r + ang(pts[0], pts[1]) - ang(g.p0[0], g.p0[1]);
+    const mid = (a, b) => ({x:(a.x + b.x) / 2, y:(a.y + b.y) / 2}), m1 = mid(pts[0], pts[1]), m0 = mid(g.p0[0], g.p0[1]);
+    it.x = clamp(g.x + (m1.x - m0.x) / w, 0, 1); it.y = clamp(g.y + (m1.y - m0.y) / h, 0, 1);
+  }
+  drawStickers();
+});
+function endPointer(e){ if (!pointers.has(e.pointerId)) return; pointers.delete(e.pointerId); if (pointers.size && stkSel) startGesture(); else gesture = null; }
+$("stage").addEventListener("pointerup", endPointer);
+$("stage").addEventListener("pointercancel", endPointer);
+window.addEventListener("resize", () => { if (!$("stk").hidden) drawStickers(); });
+$("stkImg").addEventListener("load", drawStickers);
+function closeStickers(){ $("stk").hidden = true; stkPhoto = null; stkItems = []; stkSel = null; pointers.clear(); gesture = null; }
+$("stkCancel").onclick = () => { if (stkItems.length && !confirm("Throw away these stickers?")) return; closeStickers(); };
+const loadImg = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+$("stkSave").onclick = async () => {
+  if (!stkPhoto || !assets) return;
+  if (!stkItems.length) { toast("Add a sticker first"); return; }
+  $("stkSave").disabled = true; toast("Saving…");
+  try {
+    const base = await loadImg(photoURL(stkPhoto.id));
+    const W = base.naturalWidth, H = base.naturalHeight, cv = document.createElement("canvas");
+    cv.width = W; cv.height = H; const ctx = cv.getContext("2d");
+    ctx.drawImage(base, 0, 0, W, H);
+    for (const it of stkItems) {
+      const svg = stickerSVG(it.id);
+      const img = await loadImg("data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg));
+      const sw = it.s * W, ratio = (img.naturalHeight && img.naturalWidth) ? img.naturalHeight / img.naturalWidth : 1, sh = sw * ratio;
+      ctx.save(); ctx.translate(it.x * W, it.y * H); ctx.rotate(it.r * Math.PI / 180); if (it.flip) ctx.scale(-1, 1);
+      ctx.drawImage(img, -sw / 2, -sh / 2, sw, sh); ctx.restore();
+    }
+    const blob = await new Promise(r => cv.toBlob(r, "image/jpeg", 0.9));
+    if (!blob) throw new Error("no blob");
+    const res = await assets.upload(blob, {type:"image/jpeg"});
+    state.photos.push({id:res.id, crab:stkPhoto.crab, day:dayKey(), shell:stkPhoto.shell || "", edit:true});
+    closeStickers(); save(); toast("Saved to the gallery! Tap it to save to Photos");
+  } catch(e){ toast("Couldn't save that. Try again."); }
+  finally { $("stkSave").disabled = false; }
+};
+$("vStk").onclick = () => { if (viewing) openStickers(viewing); };
+$("vShare").onclick = async () => {
+  const p = state.photos.find(x => x.id === viewing); if (!p) return;
+  try {
+    const v = await PDB.get(p.id); if (!v || !v.buf) { toast("Couldn't find that photo"); return; }
+    const c = findCrab(p.crab), file = new File([v.buf], `${c ? c.name : "crab"}-${p.day}.jpg`, {type:v.type || "image/jpeg"});
+    if (navigator.canShare && navigator.canShare({files:[file]})) { await navigator.share({files:[file]}); }
+    else { const a = document.createElement("a"); a.href = URL.createObjectURL(file); a.download = file.name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000); }
+  } catch(e){ if (!e || e.name !== "AbortError") toast("Couldn't share that photo"); }
+};
+
+/* ---------- giant crab boss art (original) ---------- */
+let bossN = 0;
+function bossCrabSVG(boss){
+  const ty = boss.t && boss.t.type;
+  if (ty === "kraken") return krakenSVG(boss.t);
+  if (ty === "shark") return sharkSVG(boss.t);
+  if (ty === "gull") return gullSVG(boss.t);
+  if (ty === "angler") return anglerSVG(boss.t);
+  return crabBossSVG(boss);
+}
+const brows = (y) => `<path d="M58 ${y - 14} L80 ${y - 6} M122 ${y - 14} L100 ${y - 6}" stroke="#100C1C" stroke-width="5" stroke-linecap="round"/>`;
+const eyePair = (y, eye, gap) => `<g class="eyes"><circle cx="${90 - gap}" cy="${y}" r="11" fill="#100C1C"/><circle cx="${90 + gap}" cy="${y}" r="11" fill="#100C1C"/><circle cx="${90 - gap}" cy="${y}" r="5" fill="${eye}"/><circle cx="${90 + gap}" cy="${y}" r="5" fill="${eye}"/></g>
+  <g class="xeyes" stroke="${eye === "#100C1C" ? "#FF5A6E" : eye}" stroke-width="4" stroke-linecap="round"><path d="M${83 - gap} ${y - 7} l14 14 M${97 - gap} ${y - 7} l-14 14 M${83 + gap} ${y - 7} l14 14 M${97 + gap} ${y - 7} l-14 14"/></g>`;
+function krakenSVG(t){
+  const mirror = d => d.replace(/(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)/g, (m, x, y) => `${190 - Number(x)} ${y}`);
+  const legs = ["M52 92 C22 110 2 128 8 150 C12 164 30 160 24 146", "M66 100 C52 128 42 150 52 164 C60 172 74 164 64 154", "M84 104 C82 134 78 154 88 166 C96 172 104 162 96 156"];
+  const arms = ["M44 66 C12 58 -6 30 8 12 C18 2 34 10 26 22"];
+  const suck = (pts) => pts.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3" fill="${t.spot}" opacity=".7"/>`).join("");
+  const tent = (d, pts, flip) => `<g class="tent"><path d="${flip ? mirror(d) : d}" stroke="${t.dark}" stroke-width="19" stroke-linecap="round" fill="none"/>
+    <path d="${flip ? mirror(d) : d}" stroke="${t.body}" stroke-width="13" stroke-linecap="round" fill="none"/>${suck(flip ? pts.map(([x, y]) => [190 - x, y]) : pts)}</g>`;
+  const legPts = [[[30,116],[14,136],[12,150]], [[56,130],[48,150]], [[82,136],[82,156]]];
+  const armPts = [[[24,52],[8,34]]];
+  return `<svg viewBox="-12 -4 214 180" aria-hidden="true">
+    <ellipse cx="95" cy="170" rx="88" ry="7" fill="#000" opacity=".35"/>
+    ${arms.map((d, i) => tent(d, armPts[i], false) + tent(d, armPts[i], true)).join("")}
+    ${legs.map((d, i) => tent(d, legPts[i], false) + tent(d, legPts[i], true)).join("")}
+    <path d="M40 96 C28 40 60 4 95 4 C130 4 162 40 150 96 C130 112 60 112 40 96 Z" fill="${t.body}" stroke="${t.dark}" stroke-width="4"/>
+    <g fill="${t.spot}" opacity=".8"><circle cx="70" cy="28" r="6"/><circle cx="120" cy="24" r="8"/><circle cx="136" cy="54" r="5"/><circle cx="56" cy="56" r="4"/><circle cx="98" cy="16" r="3"/></g>
+    <path d="M50 58 L78 66 M140 58 L112 66" stroke="#100C1C" stroke-width="6" stroke-linecap="round"/>
+    ${eyePair(72, t.eye, 22)}
+    <g class="mouth"><path d="M76 90 Q95 104 114 90 Z" fill="#100C1C"/><path d="M80 91 l3 5 l3 -5 M92 92 l3 5 l3 -5 M104 91 l3 5 l3 -5" fill="#fff"/></g>
+  </svg>`;
+}
+function sharkSVG(t){
+  return `<svg viewBox="-10 0 210 175" aria-hidden="true">
+    <ellipse cx="95" cy="168" rx="70" ry="7" fill="#000" opacity=".35"/>
+    <g class="tail"><path d="M95 138 L70 170 L95 158 L120 170 Z" fill="${t.body}" stroke="${t.dark}" stroke-width="3" stroke-linejoin="round"/></g>
+    <g class="finL"><path d="M58 96 L18 128 L62 116 Z" fill="${t.body}" stroke="${t.dark}" stroke-width="3" stroke-linejoin="round"/></g>
+    <g class="finR"><path d="M132 96 L172 128 L128 116 Z" fill="${t.body}" stroke="${t.dark}" stroke-width="3" stroke-linejoin="round"/></g>
+    <path d="M55 60 C55 40 135 40 135 60 L128 120 C120 146 70 146 62 120 Z" fill="${t.body}" stroke="${t.dark}" stroke-width="4"/>
+    <path d="M72 84 C80 132 110 132 118 84 Z" fill="${t.belly}" opacity=".9"/>
+    <path d="M95 44 L86 14 L106 40 Z" fill="${t.body}" stroke="${t.dark}" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M6 50 Q95 30 184 50 L180 70 Q95 58 10 70 Z" fill="${t.body}" stroke="${t.dark}" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M4 50 L-4 60 M186 50 L194 60" stroke="${t.dark}" stroke-width="3" stroke-linecap="round"/>
+    <g class="eyes"><circle cx="14" cy="60" r="8" fill="#100C1C"/><circle cx="176" cy="60" r="8" fill="#100C1C"/><circle cx="14" cy="60" r="3.5" fill="${t.eye}"/><circle cx="176" cy="60" r="3.5" fill="${t.eye}"/></g>
+    <g class="xeyes" stroke="${t.eye}" stroke-width="3.5" stroke-linecap="round"><path d="M8 54 l12 12 M20 54 l-12 12 M170 54 l12 12 M182 54 l-12 12"/></g>
+    <path d="M4 46 L24 52 M186 46 L166 52" stroke="#100C1C" stroke-width="4" stroke-linecap="round"/>
+    <g class="jaw"><path d="M72 88 Q95 112 118 88 Z" fill="#3A0A10"/>
+      <path d="M74 89 l4 7 l4 -7 l4 7 l4 -7 l4 7 l4 -7 l4 7 l4 -7 l4 7 l4 -7" fill="#fff" stroke="#fff" stroke-width="1" stroke-linejoin="round"/></g>
+    <path d="M60 100 l6 -3 M60 106 l6 -3 M130 100 l-6 -3 M130 106 l-6 -3" stroke="${t.dark}" stroke-width="2" stroke-linecap="round"/>
+  </svg>`;
+}
+function gullSVG(t){
+  return `<svg viewBox="-10 0 210 175" aria-hidden="true">
+    <ellipse cx="95" cy="168" rx="60" ry="7" fill="#000" opacity=".35"/>
+    <g class="wingL"><path d="M60 80 C30 60 4 70 -4 94 C20 90 36 100 60 112 Z" fill="${t.wing}" stroke="${t.dark}" stroke-width="3" stroke-linejoin="round"/><path d="M-4 94 L10 100 M6 86 L20 94" stroke="#100C1C" stroke-width="3"/></g>
+    <g class="wingR"><path d="M130 80 C160 60 186 70 194 94 C170 90 154 100 130 112 Z" fill="${t.wing}" stroke="${t.dark}" stroke-width="3" stroke-linejoin="round"/><path d="M194 94 L180 100 M184 86 L170 94" stroke="#100C1C" stroke-width="3"/></g>
+    <path d="M80 150 v14 M110 150 v14 M72 164 h16 M102 164 h16" stroke="#FF8A3D" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="95" cy="112" rx="40" ry="44" fill="${t.body}" stroke="${t.dark}" stroke-width="4"/>
+    <circle cx="95" cy="56" r="34" fill="${t.body}" stroke="${t.dark}" stroke-width="4"/>
+    <path d="M62 44 Q95 30 128 44 L126 60 Q95 52 64 60 Z" fill="#100C1C"/>
+    <g class="eyes"><circle cx="80" cy="50" r="6" fill="#fff"/><circle cx="110" cy="50" r="6" fill="#fff"/><circle cx="81" cy="51" r="3" fill="${t.eye}"/><circle cx="109" cy="51" r="3" fill="${t.eye}"/></g>
+    <g class="xeyes" stroke="#FF5A6E" stroke-width="3.5" stroke-linecap="round"><path d="M75 45 l10 10 M85 45 l-10 10 M105 45 l10 10 M115 45 l-10 10"/></g>
+    <path d="M70 36 L88 44 M120 36 L102 44" stroke="#100C1C" stroke-width="4" stroke-linecap="round"/>
+    <path d="M84 66 L95 90 L106 66 Z" fill="#FFC83D" stroke="#A87A00" stroke-width="2" stroke-linejoin="round"/>
+    <g class="jaw"><path d="M86 72 L95 82 L104 72 Z" fill="#E0A800" stroke="#A87A00" stroke-width="1.5"/><circle cx="98" cy="80" r="2.5" fill="#FF5A6E"/></g>
+    <path d="M136 150 C150 128 176 136 170 158 C164 170 140 168 136 150 Z" fill="#D9B27A" stroke="#7A5A34" stroke-width="3"/>
+    <path d="M144 146 Q156 140 164 152" stroke="#7A5A34" stroke-width="2" fill="none"/>
+  </svg>`;
+}
+function anglerSVG(t){
+  return `<svg viewBox="-10 0 210 175" aria-hidden="true">
+    <ellipse cx="95" cy="168" rx="75" ry="7" fill="#000" opacity=".35"/>
+    <g class="tail"><path d="M160 96 L196 66 L190 100 L196 134 Z" fill="${t.body}" stroke="${t.dark}" stroke-width="3" stroke-linejoin="round"/></g>
+    <g class="finR"><path d="M110 132 L128 162 L96 146 Z" fill="${t.body}" stroke="${t.dark}" stroke-width="3" stroke-linejoin="round"/></g>
+    <path d="M20 90 C20 40 70 22 110 28 C150 34 170 70 164 100 C158 136 120 152 80 150 C40 148 20 130 20 90 Z" fill="${t.body}" stroke="${t.dark}" stroke-width="4"/>
+    <g fill="#3E5070" opacity=".7"><circle cx="120" cy="60" r="5"/><circle cx="140" cy="84" r="4"/><circle cx="104" cy="44" r="3"/><circle cx="130" cy="120" r="5"/></g>
+    <g class="lure"><path d="M70 30 Q60 -2 30 4" stroke="${t.dark}" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="28" cy="6" r="10" fill="${t.lure}"/><circle cx="28" cy="6" r="18" fill="${t.lure}" opacity=".25"/></g>
+    <path d="M74 50 L100 60" stroke="#100C1C" stroke-width="5" stroke-linecap="round"/>
+    <g class="eyes"><circle cx="86" cy="66" r="13" fill="${t.eye}"/><circle cx="84" cy="67" r="6" fill="#100C1C"/></g>
+    <g class="xeyes" stroke="#FF5A6E" stroke-width="4" stroke-linecap="round"><path d="M78 58 l16 16 M94 58 l-16 16"/></g>
+    <g class="jaw"><path d="M18 92 Q60 90 104 104 Q70 146 28 126 Z" fill="#3A0A10" stroke="${t.dark}" stroke-width="3"/>
+      <path d="M26 96 l4 10 l4 -9 l4 11 l4 -10 l4 12 l4 -10 l4 12 l4 -10 l4 11 l4 -8 M34 124 l4 -10 l4 9 l4 -11 l4 10 l4 -11 l4 9 l4 -9" stroke="#F3E6C8" stroke-width="2.5" fill="none" stroke-linejoin="round"/></g>
+  </svg>`;
+}
+function crabBossSVG(boss){
+  const t = boss.t || {body:"#C8402E", dark:"#6E1A10", shell:"#8C2A1C", eye:"#FFC83D", deco:""}, id = "bk" + (++bossN);
+  const shellD = "M95 40 C150 20 196 60 186 110 C178 142 130 150 104 132 Z";
+  const deco = {
+    mold:`<g fill="#9BE36A" opacity=".85"><circle cx="130" cy="60" r="7"/><circle cx="160" cy="80" r="5"/><circle cx="145" cy="110" r="8"/><circle cx="118" cy="95" r="4"/><circle cx="172" cy="104" r="4"/></g>`,
+    horns:`<path d="M62 56 Q46 30 58 12 Q62 34 76 48 Z M118 54 Q134 28 122 10 Q118 32 104 46 Z" fill="#FFE9C2" stroke="#6E1A10" stroke-width="2"/>`,
+    bubbles:`<g fill="none" stroke="#8CF5FF" stroke-width="2.5" opacity=".8"><circle cx="150" cy="50" r="6"/><circle cx="166" cy="34" r="4"/><circle cx="176" cy="18" r="3"/><circle cx="40" cy="30" r="4"/></g>`,
+    crown:`<path d="M72 38 V20 L80 28 L90 14 L100 28 L108 20 V38 Z" fill="#FFC83D" stroke="#8A6400" stroke-width="2" stroke-linejoin="round"/><circle cx="90" cy="30" r="3" fill="#FF5A6E"/>`,
+    ice:`<g fill="#E8F7FF" stroke="#6D8DA8" stroke-width="1.5"><path d="M120 40 l6 -16 l5 16 Z"/><path d="M150 42 l7 -20 l5 20 Z"/><path d="M176 70 l14 -10 l-4 16 Z"/></g><path d="M70 92 l8 14 l8 -14 M96 94 l6 12 l6 -12" fill="#E8F7FF"/>`,
+    mask:"",
+    rivets:`<g fill="#FFD7A8" stroke="#6B3A12" stroke-width="1.2"><circle cx="118" cy="56" r="3.5"/><circle cx="150" cy="48" r="3.5"/><circle cx="176" cy="74" r="3.5"/><circle cx="170" cy="118" r="3.5"/><circle cx="130" cy="126" r="3.5"/></g><path d="M112 70 Q150 60 176 92 M112 100 Q146 96 170 120" stroke="#6B3A12" stroke-width="2" fill="none" opacity=".6"/>`,
+    shrooms:`<g><path d="M128 38 v-8" stroke="#F3E6C8" stroke-width="4"/><path d="M116 32 Q128 14 140 32 Z" fill="#FF5A6E"/><circle cx="124" cy="26" r="2" fill="#fff"/><path d="M162 58 v-7" stroke="#F3E6C8" stroke-width="4"/><path d="M152 52 Q162 36 172 52 Z" fill="#FF8A3D"/></g>`
+  }[t.deco] || "";
+  const claw = (side) => {
+    const L = side === "L";
+    // arm from body up to a big pincer
+    return `<g class="claw${side}">
+      <path d="${L ? "M70 104 Q40 96 30 70" : "M110 104 Q140 96 150 70"}" stroke="${t.body}" stroke-width="14" stroke-linecap="round" fill="none"/>
+      <g class="pinc${side}"><path d="${L ? "M30 72 C4 70 -2 40 14 26 C24 18 40 24 42 36 C36 36 26 40 28 52 C32 60 40 62 44 58 C46 68 40 74 30 72 Z" : "M150 72 C176 70 182 40 166 26 C156 18 140 24 138 36 C144 36 154 40 152 52 C148 60 140 62 136 58 C134 68 140 74 150 72 Z"}" fill="${t.body}" stroke="${t.dark}" stroke-width="3" stroke-linejoin="round"/>
+        <path d="${L ? "M16 34 l4 4 M24 28 l3 5" : "M164 34 l-4 4 M156 28 l-3 5"}" stroke="${t.dark}" stroke-width="2.5" stroke-linecap="round"/></g>
+    </g>`;
+  };
+  return `<svg viewBox="-10 0 210 170" aria-hidden="true">
+    <ellipse cx="100" cy="160" rx="80" ry="8" fill="#000" opacity=".35"/>
+    <path d="${shellD}" fill="${t.shell}" stroke="${t.dark}" stroke-width="4"/>
+    <path d="M110 58 Q150 44 176 80 M108 84 Q150 76 178 106 M112 110 Q146 108 166 128" stroke="${t.dark}" stroke-width="3" fill="none" opacity=".5"/>
+    ${t.deco !== "horns" && t.deco !== "crown" && t.deco !== "mask" ? deco : ""}
+    <g class="legs" stroke="${t.dark}" stroke-width="7" stroke-linecap="round" fill="none">
+      <path d="M72 124 L50 150 M84 130 L70 156 M98 132 L92 158 M112 130 L118 156"/></g>
+    ${claw("L")}${claw("R")}
+    <ellipse cx="90" cy="104" rx="42" ry="34" fill="${t.body}" stroke="${t.dark}" stroke-width="4"/>
+    <path d="M60 94 Q90 84 120 94" stroke="${t.dark}" stroke-width="2.5" fill="none" opacity=".5"/>
+    <g stroke="${t.body}" stroke-width="8" stroke-linecap="round"><line x1="78" y1="76" x2="72" y2="52"/><line x1="102" y1="76" x2="108" y2="52"/></g>
+    ${t.deco === "mask" ? `<path d="M54 40 Q90 28 126 40 L124 58 Q90 50 56 58 Z" fill="#100C1C"/><path d="M54 44 l-12 -6 M126 44 l12 -6" stroke="#100C1C" stroke-width="4" stroke-linecap="round"/>` : ""}
+    <g class="eyes"><circle cx="72" cy="48" r="11" fill="#100C1C"/><circle cx="108" cy="48" r="11" fill="#100C1C"/>
+      <circle cx="72" cy="48" r="5" fill="${t.eye}"/><circle cx="108" cy="48" r="5" fill="${t.eye}"/></g>
+    <g class="xeyes" stroke="${t.eye}" stroke-width="4" stroke-linecap="round"><path d="M65 41 l14 14 M79 41 l-14 14 M101 41 l14 14 M115 41 l-14 14"/></g>
+    <path d="M60 34 L82 42 M120 34 L98 42" stroke="#100C1C" stroke-width="5" stroke-linecap="round"/>
+    ${t.deco === "horns" || t.deco === "crown" || t.deco === "mask" ? deco : ""}
+    <g class="mouth"><path d="M74 108 Q90 122 106 108 Z" fill="#100C1C"/><path d="M78 109 l3 5 l3 -5 M88 110 l2 5 l2 -5 M96 110 l3 5 l3 -5" fill="#fff"/></g>
+  </svg>`;
+}
+
+/* ---------- boss battle ---------- */
+const HEAL_PER_HIT = 5, HEAL_CAP_PER_DAY = 30, IDLE_SECONDS = 12, BOSS_HIT = 20;
+let battleOpen = false, battleTimer = null, lastAction = 0, keeperHP = 100, lastDmg = null, koShown = false;
+function tasksLeftToday(){
+  const c = state.checks[dayKey()] || {};
+  return DAILY.filter(t => !c[t.id]).length + WEEKLY.filter(t => weeklyStatus(t).due && !state.weeklyLog.some(w => w.id === t.id && w.day === dayKey())).length;
+}
+function renderFab(b){
+  const show = !!b && !b.won && !battleOpen;
+  $("bossFab").hidden = !show;
+  if (show) { if ($("fabIcon").dataset.boss !== b.boss.name) { $("fabIcon").innerHTML = bossCrabSVG(b.boss); $("fabIcon").dataset.boss = b.boss.name; } $("fabHp").style.width = Math.round(Math.max(0, b.boss.hp - b.dmg) / b.boss.hp * 100) + "%"; }
+}
+function openBattle(){
+  const b = stats().boss; if (!b) return;
+  battleOpen = true; keeperHP = 100; lastAction = Date.now(); lastDmg = b.dmg; koShown = b.won;
+  $("battle").hidden = false; $("bossBig").className = "bossbig" + (b.won ? " ko" : ""); $("bossBig").innerHTML = bossCrabSVG(b.boss);
+  say(b.won ? "Already beaten this week!" : `${b.boss.name} appears! Check off tasks to attack.`);
+  renderBattle();
+  clearInterval(battleTimer); battleTimer = setInterval(battleTick, 1000);
+}
+function closeBattle(){ battleOpen = false; clearInterval(battleTimer); battleTimer = null; $("battle").hidden = true; render(); }
+$("bClose").onclick = closeBattle;
+$("bossFab").onclick = openBattle;
+function say(t){ $("bMsg").textContent = t; }
+function pop(text, cls){
+  const el = document.createElement("div"); el.className = "pop " + cls; el.textContent = text;
+  el.style.left = (30 + Math.random() * 40) + "%"; el.style.top = (25 + Math.random() * 25) + "%";
+  $("arena").appendChild(el); setTimeout(() => el.remove(), 1000);
+}
+function anim(el, cls){ el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); clearTimeout(el["_t" + cls]); el["_t" + cls] = setTimeout(() => el.classList.remove(cls), 700); }
+function renderBattle(){
+  const b = stats().boss;
+  renderFab(b);
+  if (!battleOpen || !b) return;
+  const left = Math.max(0, b.boss.hp - b.dmg);
+  $("bName").textContent = b.boss.name;
+  $("bDays").textContent = b.won ? "Defeated" : `${b.daysLeft} day${b.daysLeft === 1 ? "" : "s"} left`;
+  $("bHpBar").style.width = (left / b.boss.hp * 100) + "%";
+  $("bHpTxt").textContent = `HP ${left} / ${b.boss.hp}`;
+  const rage = !b.won && left / b.boss.hp < 0.3;
+  if (rage && !$("bossBig").classList.contains("rage")) { $("bossBig").classList.add("rage"); say(`${b.boss.name} is ENRAGED! Finish it!`); }
+  if (!rage) $("bossBig").classList.remove("rage");
+  $("kHpBar").style.width = keeperHP + "%"; $("kTxt").textContent = `${keeperHP} / 100`;
+  // animate what changed since last time
+  if (lastDmg !== null && b.dmg !== lastDmg) {
+    const d = b.dmg - lastDmg;
+    if (d > 0) { anim($("bossBig"), "hit"); pop("-" + d, d >= 40 ? "dmg big" : "dmg"); keeperHP = Math.min(100, keeperHP + 10); lastAction = Date.now();
+      if (!b.won) say(["Direct hit!","Nice shot!","It's reeling!","Keep it up!","Critical hit!"][Math.floor(Math.random() * 5)]); }
+    else if (d < 0 && !healingNow) { pop("+" + (-d), "heal"); say("Undoing a task gave it health back."); }
+    $("kHpBar").style.width = keeperHP + "%"; $("kTxt").textContent = `${keeperHP} / 100`;
+  }
+  healingNow = false;
+  lastDmg = b.dmg;
+  if (b.won && !koShown) { koShown = true; $("bossBig").className = "bossbig ko"; say("K.O.! You beat the boss!"); pop("K.O.!", "dmg big"); }
+  // task buttons in the bottom corners
+  const k = dayKey(), c = state.checks[k] || {};
+  const daily = DAILY.map(t => `<button class="bt" data-daily="${t.id}" aria-pressed="${!!c[t.id]}">${c[t.id] ? "✓" : "⚔️"} ${t.label}<span class="sw">10</span></button>`).join("");
+  const side = WEEKLY.filter(t => weeklyStatus(t).due || state.weeklyLog.some(w => w.id === t.id && w.day === k)).map(t => {
+    const done = state.weeklyLog.some(w => w.id === t.id && w.day === k);
+    return `<button class="bt" data-weekly="${t.id}" aria-pressed="${done}">${done ? "✓" : "🗡️"} ${t.label}<span class="sw">30</span></button>`; }).join("");
+  const ch = challengeFor(k), chDone = ch.test(k);
+  $("bTasks").innerHTML = `<div class="col"><h4>Daily quests</h4>${daily}</div>
+    <div class="col"><h4>Power moves</h4>${side}<div class="bt" aria-pressed="${chDone}" style="cursor:default">${chDone ? "✓" : ch.icon} Challenge: ${esc(ch.label)}<span class="sw">40</span></div>
+    ${tasksLeftToday() ? "" : `<div class="small" style="color:#3DDC84;padding:4px">All done today. The boss is resting until tomorrow.</div>`}</div>`;
+}
+let healingNow = false;
+function battleTick(){
+  if (!battleOpen) return;
+  const b = stats().boss; if (!b || b.won) return;
+  if (!tasksLeftToday()) return; // nothing left to do today, so the boss doesn't punish you
+  if ((Date.now() - lastAction) / 1000 < IDLE_SECONDS) return;
+  lastAction = Date.now();
+  // the boss attacks you and heals a little (capped per day)
+  anim($("bossBig"), "lunge"); anim($("bFlash"), "go"); anim($("keeperBox"), "shake");
+  keeperHP = Math.max(0, keeperHP - BOSS_HIT);
+  const k = dayKey(), healedToday = Number(state.bossHeals[k]) || 0, left = b.boss.hp - b.dmg;
+  const heal = Math.min(HEAL_PER_HIT, HEAL_CAP_PER_DAY - healedToday, b.dmg);
+  if (heal > 0 && left < b.boss.hp) {
+    state.bossHeals[k] = healedToday + heal; healingNow = true; save(); pop("+" + heal, "heal");
+    say(`${b.boss.name} attacks and heals ${heal}! Do a task to fight back.`);
+  } else { renderBattle(); say(`${b.boss.name} attacks! Do a task to fight back.`); }
+  if (keeperHP <= 0) {
+    say("You got knocked out! Rest up and come back.");
+    clearInterval(battleTimer); battleTimer = null;
+    setTimeout(() => { if (battleOpen) closeBattle(); }, 1800);
+  }
+}
+
+/* ---------- shell swap ---------- */
+let swapCrab = null;
+function openSwap(id){
+  const c = findCrab(id); if (!c) return; swapCrab = id;
+  $("sTitle").textContent = `${c.name}'s new shell`;
+  $("sSub").textContent = state.spares.length ? "Tap the spare shell they moved into. Their old shell goes back into your spares." : "You don't have any spares logged, so describe the new shell below.";
+  $("sList").innerHTML = state.spares.map(x => `<button class="shellopt" data-useshell="${x.id}"><span>🐚 ${esc(x.desc)}${x.mm ? ` <span class="muted small">${esc(x.mm)} mm</span>` : ""}</span>${fitTag(x, c)}</button>`).join("");
+  $("sNew").value = ""; $("sNewMM").value = "";
+  $("sview").hidden = false;
+}
+function finishSwap(spareId){
+  const c = findCrab(swapCrab); if (!c) return;
+  const before = totalXP(), k = dayKey();
+  let desc, mm;
+  if (spareId) {
+    const sp = state.spares.find(x => x.id === spareId); if (!sp) return;
+    desc = sp.desc; mm = sp.mm || ""; state.spares = state.spares.filter(x => x.id !== spareId);
+  } else {
+    desc = $("sNew").value.trim().slice(0, 40); const v = parseFloat($("sNewMM").value); mm = isFinite(v) && v > 0 ? Math.round(v * 10) / 10 : "";
+    if (!desc) { toast("Describe the new shell first"); $("sNew").focus(); return; }
+  }
+  if (c.shell) state.spares.push({id:uid(), desc:`${c.shell} (${c.name}'s old one)`.slice(0, 60), mm:c.shellMM || ""});
+  c.shells.push({day:k, note:desc}); c.shell = desc.slice(0, 30); c.shellMM = mm; c.needsPic = true;
+  $("sview").hidden = true; swapCrab = null; save(); xpToast(before, `${c.name} moved into a new shell`);
+}
+$("sUseNew").onclick = () => finishSwap(null);
+$("sClose").onclick = () => { $("sview").hidden = true; swapCrab = null; };
+function addSpare(){
+  const d = $("spareIn").value.trim(); if (!d) { toast("Describe the shell first"); return; }
+  const v = parseFloat($("spareMM").value);
+  state.spares.push({id:uid(), desc:d.slice(0, 40), mm:isFinite(v) && v > 0 && v < 200 ? Math.round(v * 10) / 10 : ""});
+  $("spareIn").value = ""; $("spareMM").value = ""; save(); toast("Spare shell added");
+}
+$("spareAdd").onclick = addSpare;
+$("spareIn").addEventListener("keydown", e => { if (e.key === "Enter") addSpare(); });
+
+/* ---------- daily login ---------- */
+function claimLogin(){
+  const ls = loginStatus(); if (ls.claimed) return;
+  const k = dayKey();
+  if (ls.n === 7) {
+    const owned = ownedStickers(), pool = STICKERS.filter(x => x.price > 0 && x.price <= 300 && !owned.has(x.id));
+    if (pool.length && Math.random() < 0.35) {
+      const sk = pool[Math.floor(Math.random() * pool.length)];
+      state.purchases.push({id:sk.id, cost:0, day:k, free:true});
+      state.logins.push({day:k, n:7, coins:25, chest:{skin:sk.id}});
+      save(); showReward("🎁", "Mystery chest", `You got the ${sk.name} sticker + 25 coins!`);
+    } else {
+      const coins = 60 + Math.floor(Math.random() * 141);
+      state.logins.push({day:k, n:7, coins, chest:{coins}});
+      save(); showReward("🎁", "Mystery chest", `${coins} coins!`);
+    }
+  } else {
+    state.logins.push({day:k, n:ls.n, coins:LOGIN_COINS[ls.n - 1]});
+    save(); toast(`+${LOGIN_COINS[ls.n - 1]} coins · Day ${ls.n} reward`);
+  }
+}
 
 /* ---------- tabs ---------- */
 const TABS = [
@@ -1183,7 +2017,7 @@ $("importIn").addEventListener("change", async () => {
 
 /* ---------- boot ---------- */
 assets = window.indexedDB ? localAssets : null;
-render(); showTab("quests"); setSync("Saved on this phone");
+render(); showTab("quests"); setSync("Saved on this phone"); bootDone = true;
 loadPhotoURLs();
 try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch(e){}
 let lastDay = dayKey();
