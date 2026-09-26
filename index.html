@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Crab Keeper</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Crab Keeper">
+<meta name="theme-color" content="#100C1C">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#100C1C; --panel:#1B1530; --panel-2:#251D40; --line:#3A2F5C; --text:#EEE8FF; --muted:#9E93C2;
+  --gold:#FFC83D; --cyan:#4CC9F0; --good:#3DDC84; --bad:#FF5A6E; --violet:#9B6BFF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:dark;
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --bg:#100C1C; --panel:#1B1530; } }
+:root[data-theme="dark"]{ --bg:#100C1C; --panel:#1B1530; }
+:root[data-theme="light"]{ --bg:#EEEAF8; --panel:#FFFFFF; --panel-2:#E6E0F5; --line:#CFC5EA; --text:#1B1530; --muted:#5E5480; color-scheme:light; }
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--text);
+  font-family:"Chakra Petch",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.45;-webkit-font-smoothing:antialiased;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:32px 32px;background-attachment:fixed;background-position:-1px -1px}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at top,transparent 0%,var(--bg) 70%);pointer-events:none;z-index:-1}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.px{font-family:"Press Start 2P",ui-monospace,monospace;letter-spacing:0}
+.wrap{max-width:560px;margin:0 auto;padding:14px 14px 110px}
+h2{font-size:26px;font-weight:700;margin:4px 0 12px}
+h3{font-size:18px;font-weight:700;margin:0 0 10px}
+p{margin:0 0 8px}
+.muted{color:var(--muted)} .small{font-size:14px}
+.panel{background:var(--panel);border:2px solid var(--line);border-radius:6px;padding:14px;margin-bottom:12px;position:relative}
+.row{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}.grow{flex:1;min-width:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* player HUD */
+.hud{background:var(--panel);border:2px solid var(--gold);border-radius:6px;padding:14px;margin-bottom:14px;box-shadow:0 0 0 4px rgba(255,200,61,.08)}
+.hud .lv{font-size:26px;color:var(--gold);line-height:1}
+.hud .title{font-weight:700;font-size:20px}
+.xpbar{height:16px;background:var(--panel-2);border:2px solid var(--line);border-radius:3px;margin-top:10px;overflow:hidden}
+.xpbar i{display:block;height:100%;background:repeating-linear-gradient(90deg,var(--gold) 0 10px,#E5A800 10px 12px);transition:width .5s}
+.hudstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;text-align:center}
+.hudstats div{background:var(--panel-2);border-radius:4px;padding:8px 4px}
+.hudstats b{display:block;font-size:22px}
+.hudstats span{font-size:12px;color:var(--muted)}
+
+/* quests */
+.quest{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--panel-2);border:2px solid transparent;border-radius:5px;padding:11px 12px;margin-bottom:8px}
+.quest .box{flex:0 0 26px;height:26px;border:2px solid var(--violet);border-radius:3px;display:grid;place-items:center}
+.quest[aria-pressed="true"]{border-color:var(--good);background:rgba(61,220,132,.08)}
+.quest[aria-pressed="true"] .box{background:var(--good);border-color:var(--good)}
+.quest[aria-pressed="true"] .box::after{content:"";width:11px;height:6px;border-left:3px solid var(--bg);border-bottom:3px solid var(--bg);transform:rotate(-45deg) translate(1px,-1px)}
+.quest .sub{display:block;font-size:13px;color:var(--muted)}
+.quest .xp{font-size:10px;color:var(--gold);white-space:nowrap}
+.quest[aria-pressed="true"] .xp{color:var(--good)}
+.due{color:var(--bad)} .ok{color:var(--good)}
+
+.alert{border-radius:5px;padding:11px 13px;margin-bottom:10px;background:rgba(255,90,110,.12);border:2px solid var(--bad)}
+.note{border-radius:5px;padding:11px 13px;margin-bottom:10px;background:rgba(76,201,240,.1);border:2px solid var(--cyan)}
+.alert b,.note b{display:block}
+
+/* forms */
+label.f{display:block;font-size:14px;color:var(--muted);margin-bottom:4px}
+input[type=number],input[type=text],input[type=date],input[type=search],textarea,select{
+  width:100%;padding:10px 12px;border-radius:4px;border:2px solid var(--line);background:var(--panel-2);min-height:46px}
+textarea{min-height:76px;resize:vertical}
+.btn{border:2px solid var(--violet);border-radius:4px;padding:10px 14px;background:var(--violet);color:#fff;font-weight:700;min-height:46px}
+.btn.ghost{background:transparent;color:var(--text);border-color:var(--line)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#1B1530}
+.btn.small{padding:6px 10px;min-height:36px;font-size:15px}
+.btn:disabled{opacity:.5;cursor:default}
+.btn:active{transform:translateY(1px)}
+
+/* crab cards */
+.crab{border-color:var(--c);box-shadow:inset 0 4px 0 var(--c)}
+.crab-top{display:flex;gap:12px;align-items:center}
+.avatar{flex:0 0 84px;width:84px;height:84px;border-radius:5px;border:2px solid var(--c);background:var(--panel-2);overflow:hidden;display:grid;place-items:center}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.avatar svg{width:74px}
+.namefield{font-size:24px;font-weight:700;border:0;background:transparent;padding:0;min-height:0;width:100%}
+.namefield:focus{background:var(--panel-2)}
+.shellfield{border:0;background:transparent;padding:0;min-height:0;color:var(--muted);font-size:15px;width:100%}
+.crablv{font-size:11px;color:var(--c)}
+.stat{display:grid;grid-template-columns:92px 1fr 36px;align-items:center;gap:8px;margin:7px 0;font-size:15px}
+.meter{height:12px;background:var(--panel-2);border-radius:2px;overflow:hidden}
+.meter i{display:block;height:100%}
+.skill{display:grid;grid-template-columns:92px 1fr auto;align-items:center;gap:8px;margin:6px 0;font-size:15px}
+.pips{display:flex;gap:3px}
+.pips span{flex:1;height:12px;background:var(--panel-2);border-radius:1px}
+.pips span.on{background:var(--c)}
+.pm{display:flex;gap:4px}
+.pm button{width:32px;height:32px;border-radius:4px;border:2px solid var(--line);background:var(--panel-2);font-weight:700;line-height:1}
+.traits{display:flex;flex-wrap:wrap;gap:6px}
+.trait{border:2px solid var(--line);background:transparent;border-radius:3px;padding:4px 9px;font-size:14px;color:var(--muted)}
+.trait[aria-pressed="true"]{border-color:var(--c);color:var(--text);background:var(--panel-2)}
+.records{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center;margin-top:10px}
+.records div{background:var(--panel-2);border-radius:4px;padding:7px 2px}
+.records b{display:block;font-size:20px}.records span{font-size:11px;color:var(--muted)}
+.tag{display:inline-block;font-size:13px;font-weight:700;padding:2px 8px;border-radius:3px;background:rgba(61,220,132,.15);color:var(--good)}
+.tag.bad{background:rgba(255,90,110,.15);color:var(--bad)}
+.tag.m{background:rgba(155,107,255,.18);color:var(--violet)}
+.tag.s{background:rgba(255,200,61,.15);color:var(--gold)}
+details{margin-top:10px;border-top:2px dashed var(--line);padding-top:8px}
+summary{cursor:pointer;font-weight:700;color:var(--muted);padding:4px 0}
+.list{list-style:none;margin:0;padding:0}
+.list li{padding:9px 0;border-bottom:1px dashed var(--line)}
+.list li:last-child{border-bottom:0}
+
+/* gallery */
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.ph{position:relative;aspect-ratio:1;border-radius:4px;overflow:hidden;border:2px solid var(--pc,var(--line));background:var(--panel-2);padding:0}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph span{position:absolute;left:0;right:0;bottom:0;font-size:11px;padding:3px 5px;background:rgba(16,12,28,.8);color:#EEE8FF;text-align:left}
+.viewer{position:fixed;inset:0;background:rgba(10,8,18,.94);z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(20px + env(safe-area-inset-top,0px)) 16px calc(20px + env(safe-area-inset-bottom,0px))}
+.viewer img{max-width:100%;max-height:70vh;border-radius:6px}
+.viewer .cap{color:#EEE8FF;margin:12px 0}
+
+/* readings */
+.big{font-size:38px;font-weight:700;line-height:1}.big small{font-size:18px;color:var(--muted)}
+.chart{width:100%;height:auto;display:block}
+
+/* food */
+.food{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line);gap:10px}
+.food:last-child{border-bottom:0}
+
+/* trophies */
+.trophies{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.trophy{background:var(--panel-2);border:2px solid var(--line);border-radius:5px;padding:12px;opacity:.55}
+.trophy.got{opacity:1;border-color:var(--gold)}
+.trophy .ic{font-size:26px;line-height:1;filter:grayscale(1)}
+.trophy.got .ic{filter:none}
+.trophy b{display:block;margin-top:6px}
+.trophy span{font-size:13px;color:var(--muted)}
+.trophy .xp{font-size:9px;color:var(--gold);margin-top:6px;display:block}
+
+/* ask */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chip{border:2px solid var(--line);background:var(--panel-2);border-radius:3px;padding:5px 10px;font-size:14px}
+.answer{white-space:pre-wrap;background:var(--panel-2);border-left:4px solid var(--cyan);border-radius:4px;padding:12px;margin-top:10px}
+
+/* tabs */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--panel);border-top:2px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:10}
+nav.tabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+nav.tabs button{background:none;border:0;padding:9px 2px 10px;font-size:12px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px}
+nav.tabs button svg{width:24px;height:24px}
+nav.tabs button[aria-selected="true"]{color:var(--gold)}
+[hidden]{display:none!important}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--panel-2);border:2px solid var(--gold);color:var(--text);
+  padding:9px 16px;border-radius:4px;font-size:15px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+/* the one big moment: level up */
+.levelup{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:rgba(10,8,18,.85);opacity:0;pointer-events:none;transition:opacity .25s}
+.levelup.show{opacity:1;pointer-events:auto}
+.levelup .card{text-align:center;padding:28px 22px;border:3px solid var(--gold);background:#1B1530;border-radius:6px;transform:scale(.8);transition:transform .35s cubic-bezier(.2,1.6,.4,1);max-width:88vw;color:#EEE8FF}
+.levelup.show .card{transform:scale(1)}
+.levelup .l1{font-size:14px;color:var(--gold)}
+.levelup .l2{font-size:48px;color:var(--gold);margin:14px 0}
+.sync{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HUD always visible -->
+<div class="hud" id="hud"></div>
+
+<!-- QUESTS -->
+<section id="tab-quests" hidden>
+  <div id="alerts"></div>
+  <div class="panel">
+    <div class="row between"><h3 style="margin:0">Daily quests</h3><span class="muted small" id="dailyCount"></span></div>
+    <p class="muted small" style="margin:4px 0 10px">Clear all 5 for a +25 XP perfect-day bonus. Resets at midnight.</p>
+    <div id="daily"></div>
+  </div>
+  <div class="panel">
+    <h3>Side quests</h3>
+    <div id="weekly"></div>
+  </div>
+  <div class="panel">
+    <h3>Crab care guide</h3>
+    <details><summary>Why is my crab digging so much?</summary><p class="small">Digging is normal. Crabs dig to chill out, cool down, get to moist sand, or molt. If one stays buried for days, it's probably molting, so leave it alone. Keep the substrate at least 3 times as deep as your biggest crab is tall (about 6 inches is great).</p></details>
+    <details><summary>Is my humidity okay?</summary><p class="small">Aim for 70–80%. Too low: mist the sand and coconut fiber with dechlorinated water and cover part of the lid with plastic wrap to hold moisture in. Too high (water beading on the glass, mold): crack the lid open a little for airflow.</p></details>
+    <details><summary>Meal ideas</summary><p class="small">Mix it up every day: a protein (boiled egg, plain shrimp, plain chicken), a fruit (mango, banana, coconut), a veggie (carrot, spinach, sweet potato), and calcium (cuttlebone, crushed eggshell). Tiny portions, and toss leftovers every day.</p></details>
+    <details><summary>Signs a crab is sick</summary><p class="small">Sitting above ground and barely moving for days, dropping legs, hanging out of its shell, or not eating for a long time while above ground. Check temp and humidity first, since those cause most problems. A strong rotten smell can mean a crab has died. Don't confuse a molted skin (looks like a whole crab but is hollow) with a dead crab.</p></details>
+    <details><summary>Do they like their shells?</summary><p class="small">Keep 3+ spare shells per crab with openings a little bigger than their current ones. Purple pinchers like round openings (turbo shells). Boil new shells in dechlorinated water and let them cool first. If they fight over shells or keep swapping, add more options.</p></details>
+  </div>
+</section>
+
+<!-- CRABS -->
+<section id="tab-crabs" hidden>
+  <div id="crabList"></div>
+  <div class="panel">
+    <div class="row between"><h3 style="margin:0">Photo log</h3><span class="muted small" id="photoCount"></span></div>
+    <p class="muted small" style="margin:4px 0 10px">Snap a pic after every shell change to build each crab's shell history.</p>
+    <div class="row" id="photoBtns" style="margin-bottom:10px"></div>
+    <input type="file" id="fileIn" accept="image/*" hidden>
+    <div class="gallery" id="gallery"></div>
+    <p class="muted small" id="photoNote" hidden></p>
+  </div>
+  <button class="btn ghost" id="addCrab" style="width:100%">Recruit another crab</button>
+</section>
+
+<!-- TANK -->
+<section id="tab-tank" hidden>
+  <h2>Tank</h2>
+  <div class="panel">
+    <h3>Current conditions</h3>
+    <div class="row" id="nowReading" style="gap:18px;align-items:flex-end"></div>
+    <p class="muted small" style="margin:10px 0 0">Target 75–85°F and 70–80% humidity. Purple pinchers breathe through gills that need moist air.</p>
+  </div>
+  <div class="panel">
+    <h3>Log a reading <span class="px" style="font-size:10px;color:var(--gold)">+10 XP</span></h3>
+    <div class="grid2">
+      <div><label class="f" for="inTemp">Temp (°F)</label><input id="inTemp" type="number" inputmode="decimal" step="0.1" placeholder="80"></div>
+      <div><label class="f" for="inHum">Humidity (%)</label><input id="inHum" type="number" inputmode="decimal" step="1" placeholder="75"></div>
+    </div>
+    <button class="btn" id="saveReading" style="width:100%;margin-top:10px">Save reading</button>
+  </div>
+  <div class="panel">
+    <h3>Temperature</h3><div id="tempChart"></div>
+    <h3 style="margin-top:14px">Humidity</h3><div id="humChart"></div>
+  </div>
+  <div class="panel">
+    <h3>Recent readings</h3>
+    <ul class="list" id="readingList"></ul>
+  </div>
+  <div class="panel">
+    <h3>Loot to buy</h3>
+    <div id="shopping"></div>
+    <div class="row" style="margin-top:10px">
+      <input id="shopIn" type="text" placeholder="Add an item" class="grow" aria-label="New shopping item">
+      <button class="btn small" id="shopAdd">Add</button>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>Backup</h3>
+    <p class="muted small">Your progress saves on this phone. Save a backup to Files once in a while so you never lose it.</p>
+    <div class="grid2"><button class="btn" id="exportBtn">Save backup</button><button class="btn ghost" id="importBtn">Load backup</button></div>
+    <input type="file" id="importIn" accept=".json,application/json" hidden>
+  </div>
+</section>
+
+<!-- FOOD -->
+<section id="tab-food" hidden>
+  <h2>Food</h2>
+  <div class="panel">
+    <h3>Log a feeding <span class="px" style="font-size:10px;color:var(--gold)">+10 XP</span></h3>
+    <div class="row">
+      <input id="feedIn" type="text" class="grow" placeholder="e.g. mango + boiled egg" aria-label="What you fed">
+      <button class="btn small" id="feedAdd">Log</button>
+    </div>
+    <p class="muted small" id="variety" style="margin:10px 0 0"></p>
+    <ul class="list" id="feedList"></ul>
+  </div>
+  <div class="panel">
+    <h3>Can they eat it?</h3>
+    <input id="foodSearch" type="search" placeholder="Search a food" aria-label="Search foods">
+    <div id="foodList" style="margin-top:8px"></div>
+  </div>
+</section>
+
+<!-- TROPHIES -->
+<section id="tab-trophies" hidden>
+  <h2>Trophies</h2>
+  <p class="muted" id="trophyCount"></p>
+  <div class="trophies" id="trophies"></div>
+  <div class="panel" style="margin-top:12px">
+    <h3>How to earn XP</h3>
+    <ul class="list small">
+      <li class="row between"><span>Each daily quest</span><span class="px" style="font-size:10px;color:var(--gold)">10</span></li>
+      <li class="row between"><span>Perfect day bonus</span><span class="px" style="font-size:10px;color:var(--gold)">25</span></li>
+      <li class="row between"><span>Side quest</span><span class="px" style="font-size:10px;color:var(--gold)">20</span></li>
+      <li class="row between"><span>Reading or feeding (up to 3 a day)</span><span class="px" style="font-size:10px;color:var(--gold)">10</span></li>
+      <li class="row between"><span>Photo (up to 3 a day)</span><span class="px" style="font-size:10px;color:var(--gold)">15</span></li>
+      <li class="row between"><span>Shell change logged</span><span class="px" style="font-size:10px;color:var(--gold)">20</span></li>
+      <li class="row between"><span>Crab finishes a molt</span><span class="px" style="font-size:10px;color:var(--gold)">75</span></li>
+    </ul>
+  </div>
+</section>
+
+<div class="sync" id="sync"></div>
+</div>
+
+<nav class="tabs" role="tablist" aria-label="Sections"><div class="in" id="tabs"></div></nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="levelup" id="levelup" role="dialog" aria-modal="true" aria-labelledby="luTitle">
+  <div class="card"><div class="l1 px" id="luTitle">Level up</div><div class="l2 px" id="luLevel">2</div><div id="luName" style="font-size:20px;font-weight:700"></div>
+  <button class="btn gold" id="luClose" style="margin-top:18px;width:100%">Keep going</button></div>
+</div>
+<div class="viewer" id="viewer" hidden>
+  <img id="vImg" alt="">
+  <div class="cap" id="vCap"></div>
+  <div class="row"><button class="btn ghost" id="vDel" style="color:#FF5A6E;border-color:#FF5A6E">Delete</button><button class="btn" id="vClose">Close</button></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+const $ = id => document.getElementById(id);
+const dayKey = (d = new Date()) => { const x = new Date(d); return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0"); };
+const noon = k => new Date(k + "T12:00:00");
+const daysBetween = (a, b) => Math.round((noon(dayKey(a)) - noon(dayKey(b))) / -86400000);
+const daysSince = k => daysBetween(noon(k), new Date());
+const uid = () => Math.random().toString(36).slice(2, 10);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmtTime = t => new Date(t).toLocaleString([], {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"});
+const fmtDay = k => noon(k).toLocaleDateString([], {month:"short", day:"numeric"});
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function toast(msg){ const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 1900); }
+
+/* ---------- game data ---------- */
+const DAILY = [
+  {id:"fresh", label:"Fresh water", sub:"Dechlorinated or spring water"},
+  {id:"salt",  label:"Salt water", sub:"Mixed with Zoo Med saltwater solution"},
+  {id:"food",  label:"Fresh food", sub:"Toss yesterday's leftovers first"},
+  {id:"mist",  label:"Check humidity", sub:"Mist if under 70%"},
+  {id:"clean", label:"Spot clean", sub:"Poop, old food, any mold"}
+];
+const WEEKLY = [
+  {id:"dishes", label:"Wash water dishes", sub:"Hot water only, no soap", every:7},
+  {id:"shells", label:"Check spare shells", sub:"3+ per crab, a bit bigger than current", every:14},
+  {id:"sub",    label:"Moisten substrate", sub:"Sandcastle-firm. Skip if someone's molting", every:7}
+];
+const TRAITS = ["Shy","Bold","Digger","Climber","Night owl","Foodie","Explorer","Chill","Pinchy","Speedy"];
+const SKILLS = [["speed","Speed"],["pinch","Pinch"],["dig","Dig"],["climb","Climb"],["brave","Bravery"]];
+const TITLES = ["Beach rookie","Sand digger","Shell scout","Tide keeper","Reef ranger","Crab whisperer","Coconut commander","Molt master","Island boss","Legendary keeper"];
+const FOODS = [
+  ["Mango","yes"],["Banana","yes"],["Apple (no seeds)","yes"],["Coconut","yes"],["Strawberries","yes"],["Blueberries","yes"],
+  ["Papaya","yes"],["Grapes","yes"],["Watermelon","yes"],["Carrot","yes"],["Sweet potato (cooked)","yes"],["Spinach","yes"],
+  ["Kale","yes"],["Broccoli","yes"],["Corn","yes"],["Peas","yes"],["Bell pepper","yes"],["Zucchini","yes"],
+  ["Boiled egg (with crushed shell)","yes"],["Plain cooked chicken","yes"],["Plain cooked shrimp","yes"],["Plain cooked fish","yes"],
+  ["Cuttlebone","yes"],["Oyster shell (crushed)","yes"],["Unsalted nuts","yes"],["Plain oats","yes"],["Dried oak or magnolia leaves","yes"],
+  ["Bee pollen","yes"],["Unsweetened coconut flakes","yes"],["Hibiscus flowers","yes"],["Dried mealworms","yes"],
+  ["Plain rice (cooked)","some"],["Plain pasta","some"],["Cheese","some"],["Peanut butter (no salt/sugar)","some"],["Honey","some"],
+  ["Onion","no"],["Garlic","no"],["Chives / leeks","no"],["Salted or seasoned food","no"],["Chips / crackers","no"],
+  ["Anything with preservatives","no"],["Food with ethoxyquin","no"],["Food with copper sulfate","no"],["Candy / chocolate","no"],
+  ["Bread","no"],["Pet store crab pellets (most brands)","no"],["Tap water (untreated)","no"],["Citrus (lemon, lime)","no"]
+];
+const FOOD_TXT = {yes:"Good", some:"Sometimes", no:"Avoid"};
+
+/* ---------- state ---------- */
+function newCrab(name, shell, color){
+  return {id:uid(), name, shell, color, since:dayKey(), molting:false, moltStart:null, molts:[], shells:[], traits:[], skills:{speed:5,pinch:5,dig:5,climb:5,brave:5}, notes:""};
+}
+function defaultState(){
+  return {
+    v:2,
+    crabs:[newCrab("Mario","Spiked shell","#FF5A6E"), newCrab("Luigi","Striped shell","#3DDC84")],
+    checks:{}, weeklyLog:[], readings:[], feedings:[], photos:[],
+    shopping:["Solid lid","Spring water","Climbing branch","Crab food","Cuttlebone","Spray bottle"].map(t => ({id:uid(), text:t, done:false})),
+    updated:0
+  };
+}
+function normCrab(c){
+  const d = newCrab(c.name || "Crab", c.shell || "", c.color || "#9B6BFF");
+  return Object.assign(d, c, {
+    molts: Array.isArray(c.molts) ? c.molts : [], shells: Array.isArray(c.shells) ? c.shells : [],
+    traits: Array.isArray(c.traits) ? c.traits : [], skills: Object.assign({speed:5,pinch:5,dig:5,climb:5,brave:5}, c.skills || {})
+  });
+}
+function normalize(s){
+  const d = defaultState();
+  if (!s || typeof s !== "object") return d;
+  return {
+    v:2,
+    crabs: Array.isArray(s.crabs) ? s.crabs.filter(c => c && c.id).map(normCrab) : d.crabs,
+    checks: s.checks && typeof s.checks === "object" ? s.checks : {},
+    weeklyLog: Array.isArray(s.weeklyLog) ? s.weeklyLog.filter(w => w && w.id && w.day) : [],
+    readings: Array.isArray(s.readings) ? s.readings.filter(r => r && isFinite(r.temp) && isFinite(r.hum)) : [],
+    feedings: Array.isArray(s.feedings) ? s.feedings.filter(f => f && f.food) : [],
+    photos: Array.isArray(s.photos) ? s.photos.filter(p => p && p.id) : [],
+    shopping: Array.isArray(s.shopping) ? s.shopping.filter(x => x && x.id) : d.shopping,
+    updated: Number(s.updated) || 0
+  };
+}
+// bring over logs from version 1 (crabs get replaced by Mario & Luigi)
+function migrateV1(old){
+  const s = defaultState();
+  if (!old || typeof old !== "object") return s;
+  if (old.checks && typeof old.checks === "object") s.checks = old.checks;
+  if (Array.isArray(old.readings)) s.readings = old.readings.filter(r => r && isFinite(r.temp) && isFinite(r.hum));
+  if (Array.isArray(old.feedings)) s.feedings = old.feedings.filter(f => f && f.food);
+  if (Array.isArray(old.shopping) && old.shopping.length) s.shopping = old.shopping.filter(x => x && x.id);
+  if (old.weekly && typeof old.weekly === "object") Object.keys(old.weekly).forEach(id => s.weeklyLog.push({id, day:old.weekly[id]}));
+  return s;
+}
+
+const LS = "crab-keeper-v2", LS_OLD = "crab-keeper-v1";
+let state = (() => {
+  try {
+    const v2 = localStorage.getItem(LS); if (v2) return normalize(JSON.parse(v2));
+    const v1 = localStorage.getItem(LS_OLD); if (v1) return migrateV1(JSON.parse(v1));
+  } catch(e){}
+  return defaultState();
+})();
+let assets = null, saveTimer = null, prevLevel = null;
+
+function save(){
+  state.updated = Date.now();
+  if (state.readings.length > 400) state.readings = state.readings.slice(-400);
+  if (state.feedings.length > 300) state.feedings = state.feedings.slice(-300);
+  if (state.weeklyLog.length > 300) state.weeklyLog = state.weeklyLog.slice(-300);
+  try { localStorage.setItem(LS, JSON.stringify(state)); } catch(e){}
+  clearTimeout(saveTimer); saveTimer = setTimeout(pushCloud, 700);
+  render();
+}
+function pushCloud(){}
+const setSync = t => { $("sync").textContent = t; };
+
+/* ---------- XP + achievements (all computed from your logs, so unchecking takes XP back) ---------- */
+function dayDone(k){ const c = state.checks[k] || {}; return DAILY.every(t => c[t.id]); }
+function streak(){
+  let n = 0; const d = new Date();
+  if (!dayDone(dayKey(d))) d.setDate(d.getDate() - 1);
+  while (dayDone(dayKey(d)) && n < 5000) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function bestStreak(){
+  const days = Object.keys(state.checks).filter(dayDone).sort();
+  let best = 0, run = 0, prev = null;
+  days.forEach(k => { run = prev && daysBetween(noon(prev), noon(k)) === 1 ? run + 1 : 1; best = Math.max(best, run); prev = k; });
+  return best;
+}
+function perDayCapped(list, getDay, cap, each){
+  const count = {}; let xp = 0;
+  list.forEach(x => { const k = getDay(x); count[k] = (count[k] || 0) + 1; if (count[k] <= cap) xp += each; });
+  return xp;
+}
+function baseXP(){
+  let xp = 0;
+  Object.keys(state.checks).forEach(k => { const c = state.checks[k] || {}; xp += DAILY.filter(t => c[t.id]).length * 10; if (dayDone(k)) xp += 25; });
+  xp += state.weeklyLog.length * 20;
+  xp += perDayCapped(state.readings, r => dayKey(r.t), 3, 10);
+  xp += perDayCapped(state.feedings, f => dayKey(f.t), 3, 10);
+  xp += perDayCapped(state.photos, p => p.day, 3, 15);
+  state.crabs.forEach(c => { xp += c.shells.length * 20 + c.molts.length * 75; });
+  return xp;
+}
+const need = L => 100 + 40 * (L - 1); // XP to go from level L to L+1
+function levelInfo(xp){
+  let L = 1, rem = xp;
+  while (rem >= need(L) && L < 99) { rem -= need(L); L++; }
+  return {level:L, into:rem, next:need(L), title:TITLES[Math.min(TITLES.length - 1, Math.floor((L - 1) / 2))]};
+}
+function inRangeRun(){
+  let best = 0, run = 0;
+  state.readings.forEach(r => { run = tempOk(r.temp) && humOk(r.hum) ? run + 1 : 0; best = Math.max(best, run); });
+  return best;
+}
+function trophyList(){
+  const foods = new Set(state.feedings.map(f => f.food.toLowerCase().trim())).size;
+  const anyTask = Object.values(state.checks).some(c => c && Object.values(c).some(Boolean));
+  const bs = bestStreak();
+  const swaps = state.crabs.reduce((a, c) => a + c.shells.length, 0);
+  const molts = state.crabs.reduce((a, c) => a + c.molts.length, 0);
+  const list = [
+    ["first","🥇","First quest","Finish any care task",25, anyTask],
+    ["perfect","⭐","Perfect day","Clear all 5 daily quests",25, Object.keys(state.checks).some(dayDone)],
+    ["s3","🔥","On a roll","3-day streak",50, bs >= 3],
+    ["s7","⚡","Week warrior","7-day streak",100, bs >= 7],
+    ["s30","👑","Crab legend","30-day streak",300, bs >= 30],
+    ["side","🧽","Deep clean","Finish a side quest",25, state.weeklyLog.length > 0],
+    ["r10","🌡️","Weather station","Log 10 readings",50, state.readings.length >= 10],
+    ["dial","🎯","Dialed in","5 perfect readings in a row",75, inRangeRun() >= 5],
+    ["chef","🍳","Chef","Serve 5 different meals",50, foods >= 5],
+    ["buffet","🍱","Buffet boss","Serve 15 different meals",100, foods >= 15],
+    ["swap","🐚","New digs","Log a shell change",50, swaps > 0],
+    ["molt","🦀","Fresh armor","A crab finishes a molt",100, molts > 0],
+    ["pic","📸","Paparazzi","Add a photo",25, state.photos.length > 0],
+    ["pic10","🖼️","Photo album","Add 10 photos",75, state.photos.length >= 10]
+  ];
+  const earned = list.filter(t => t[5]).reduce((a, t) => a + t[4], 0);
+  const lvl = levelInfo(baseXP() + earned).level;
+  list.push(["l5","🎮","Level 5","Reach keeper level 5",100, lvl >= 5]);
+  list.push(["l10","💎","Level 10","Reach keeper level 10",200, lvl >= 10]);
+  return list;
+}
+function totalXP(){ return baseXP() + trophyList().filter(t => t[5]).reduce((a, t) => a + t[4], 0); }
+
+/* ---------- tank helpers ---------- */
+const latest = () => state.readings.length ? state.readings[state.readings.length - 1] : null;
+const tempOk = t => t >= 75 && t <= 85;
+const humOk = h => h >= 70 && h <= 80;
+function weeklyStatus(t){
+  const logs = state.weeklyLog.filter(w => w.id === t.id).map(w => w.day).sort();
+  const last = logs[logs.length - 1];
+  if (!last) return {due:true, text:"Never done"};
+  const ago = daysSince(last), left = t.every - ago;
+  if (ago === 0) return {due:false, text:"Done today"};
+  return left <= 0 ? {due:true, text:`Last done ${ago}d ago, due now`} : {due:false, text:`Last done ${ago}d ago, due in ${left}d`};
+}
+function tankStats(){
+  const recent = state.readings.slice(-10);
+  const hp = recent.length ? Math.round(recent.filter(r => tempOk(r.temp) && humOk(r.hum)).length / recent.length * 100) : 50;
+  const lastFeed = state.feedings.length ? state.feedings[state.feedings.length - 1].t : 0;
+  const fedToday = (state.checks[dayKey()] || {}).food;
+  const hrs = lastFeed ? (Date.now() - lastFeed) / 3600000 : 99;
+  const fed = fedToday ? 100 : Math.round(clamp(100 - (hrs - 12) * (100 / 36), 0, 100));
+  const c = state.checks[dayKey()] || {}, y = new Date(); y.setDate(y.getDate() - 1);
+  const cy = state.checks[dayKey(y)] || {};
+  const water = (c.fresh ? 50 : 0) + (c.salt ? 50 : 0) || ((cy.fresh ? 25 : 0) + (cy.salt ? 25 : 0));
+  return {hp, fed, water};
+}
+function crabXP(c){ return Math.max(0, daysSince(c.since)) * 3 + c.molts.length * 80 + c.shells.length * 25 + state.photos.filter(p => p.crab === c.id).length * 5; }
+const crabLevel = c => Math.floor(Math.sqrt(crabXP(c) / 12)) + 1;
+
+/* ---------- crab art (original design; shell pattern follows shell name) ---------- */
+function crabSVG(c, mood){
+  const col = c.color || "#9B6BFF", sh = (c.shell || "").toLowerCase();
+  const spikes = sh.includes("spik") ? `<path d="M58 20 l3 -9 l4 8 M70 22 l6 -8 l2 10 M80 32 l9 -4 l-3 9 M86 46 l9 1 l-6 7" fill="#E7C98F" stroke="#7A5A34" stroke-width="2" stroke-linejoin="round"/>` : "";
+  const stripes = sh.includes("strip") ? `<path d="M60 22 q-6 20 -8 44 M70 22 q2 22 -6 50 M80 30 q8 18 -2 42" stroke="#8B5A2B" stroke-width="5" fill="none" stroke-linecap="round"/>` : "";
+  const mouth = mood === "sad" ? "M34 61 q6 -5 12 0" : "M34 58 q6 5 12 0";
+  return `<svg viewBox="0 0 100 90" aria-hidden="true">
+    ${spikes}<path d="M52 20 C82 14 96 42 84 64 C76 78 54 80 46 70 Z" fill="#D9B27A" stroke="#7A5A34" stroke-width="2.5"/>${stripes}
+    <g stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".85">
+      <line x1="36" y1="70" x2="22" y2="84"/><line x1="42" y1="72" x2="34" y2="86"/><line x1="48" y1="72" x2="46" y2="87"/>
+      <line x1="34" y1="44" x2="30" y2="22"/><line x1="42" y1="44" x2="44" y2="20"/></g>
+    <circle cx="30" cy="20" r="5" fill="#100C1C"/><circle cx="44" cy="18" r="5" fill="#100C1C"/>
+    <circle cx="31.5" cy="18.5" r="1.6" fill="#fff"/><circle cx="45.5" cy="16.5" r="1.6" fill="#fff"/>
+    <ellipse cx="40" cy="58" rx="16" ry="14" fill="#8E4BB8"/>
+    <path d="M26 58 C8 52 6 72 20 74 C28 75 32 68 30 62 Z" fill="#6B2E8F"/>
+    <path d="${mouth}" stroke="#100C1C" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`;
+}
+const BLANK = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+const photoURLs = {};
+const photoURL = id => photoURLs[id] || BLANK;
+// tiny IndexedDB store for photos (stored as ArrayBuffers, which iOS Safari handles reliably)
+const PDB = (() => {
+  let dbp = null;
+  const open = () => dbp || (dbp = new Promise((res, rej) => {
+    const r = indexedDB.open("crab-keeper-photos", 1);
+    r.onupgradeneeded = () => r.result.createObjectStore("p");
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  }));
+  const tx = (mode, fn) => open().then(db => new Promise((res, rej) => {
+    const t = db.transaction("p", mode), req = fn(t.objectStore("p"));
+    t.oncomplete = () => res(req ? req.result : undefined); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error);
+  }));
+  return {
+    put: (id, v) => tx("readwrite", st => st.put(v, id)),
+    get: id => tx("readonly", st => st.get(id)),
+    del: id => tx("readwrite", st => st.delete(id))
+  };
+})();
+async function loadPhotoURLs(){
+  let changed = false;
+  for (const p of state.photos) {
+    if (photoURLs[p.id]) continue;
+    try { const v = await PDB.get(p.id); if (v && v.buf) { photoURLs[p.id] = URL.createObjectURL(new Blob([v.buf], {type:v.type || "image/jpeg"})); changed = true; } } catch(e){}
+  }
+  if (changed) renderCrabs();
+}
+const localAssets = {
+  async upload(blob, opts){
+    const id = "p" + Date.now().toString(36) + uid();
+    const buf = await blob.arrayBuffer();
+    await PDB.put(id, {buf, type:(opts && opts.type) || blob.type || "image/jpeg"});
+    photoURLs[id] = URL.createObjectURL(new Blob([buf], {type:(opts && opts.type) || "image/jpeg"}));
+    return {id};
+  },
+  async delete(id){ await PDB.del(id); if (photoURLs[id]) { URL.revokeObjectURL(photoURLs[id]); delete photoURLs[id]; } }
+};
+function avatarFor(c){
+  const ps = state.photos.filter(p => p.crab === c.id);
+  return ps.length ? `<img src="${photoURL(ps[ps.length - 1].id)}" alt="${esc(c.name)}">` : crabSVG(c, c.molting ? "sad" : "happy");
+}
+
+/* ---------- render ---------- */
+function render(){ renderHUD(); renderQuests(); renderCrabs(); renderTank(); renderFood(); renderTrophies(); }
+
+function renderHUD(){
+  const xp = totalXP(), L = levelInfo(xp), s = streak(), got = trophyList().filter(t => t[5]).length;
+  $("hud").innerHTML = `<div class="row between">
+      <div><div class="muted small">Keeper</div><div class="title">${esc(L.title)}</div></div>
+      <div style="text-align:right"><div class="muted small">Level</div><div class="lv px">${L.level}</div></div></div>
+    <div class="xpbar" role="progressbar" aria-valuemin="0" aria-valuemax="${L.next}" aria-valuenow="${L.into}" aria-label="XP to next level"><i style="width:${(L.into / L.next * 100).toFixed(1)}%"></i></div>
+    <div class="row between small muted" style="margin-top:4px"><span>${L.into} / ${L.next} XP</span><span>${xp} total</span></div>
+    <div class="hudstats"><div><b>🔥 ${s}</b><span>day streak</span></div><div><b>${bestStreak()}</b><span>best streak</span></div><div><b>🏆 ${got}</b><span>trophies</span></div></div>`;
+  let seen = 0; try { seen = Number(localStorage.getItem("crab-keeper-seen-level")) || 0; } catch(e){}
+  if (prevLevel !== null && L.level > prevLevel && L.level > seen) {
+    try { localStorage.setItem("crab-keeper-seen-level", String(L.level)); } catch(e){}
+    $("luLevel").textContent = L.level; $("luName").textContent = L.title;
+    $("levelup").classList.add("show"); setTimeout(() => $("luClose").focus(), 50);
+  }
+  if (prevLevel === null && L.level > seen) { try { localStorage.setItem("crab-keeper-seen-level", String(L.level)); } catch(e){} }
+  prevLevel = L.level;
+}
+
+function renderQuests(){
+  const k = dayKey(), c = state.checks[k] || {};
+  const done = DAILY.filter(t => c[t.id]).length;
+  $("dailyCount").textContent = `${done}/${DAILY.length}`;
+  $("daily").innerHTML = DAILY.map(t => `<button class="quest" data-daily="${t.id}" aria-pressed="${!!c[t.id]}">
+      <span class="box"></span><span class="grow"><span>${t.label}</span><span class="sub">${t.sub}</span></span><span class="xp px">+10</span></button>`).join("");
+  $("weekly").innerHTML = WEEKLY.map(t => {
+    const st = weeklyStatus(t), today = state.weeklyLog.some(w => w.id === t.id && w.day === k);
+    return `<button class="quest" data-weekly="${t.id}" aria-pressed="${today}"><span class="box"></span>
+      <span class="grow"><span>${t.label}</span><span class="sub">${t.sub}</span><span class="sub ${st.due ? "due" : "ok"}">${st.text}</span></span><span class="xp px">+20</span></button>`;
+  }).join("");
+
+  const out = [], r = latest();
+  if (!r) out.push(`<div class="note"><b>Log your first reading</b>Go to Tank and enter the temp and humidity from your gauge.</div>`);
+  else {
+    const hrs = (Date.now() - r.t) / 3600000;
+    if (!tempOk(r.temp)) out.push(`<div class="alert"><b>Temp is ${r.temp}°F</b>${r.temp < 75 ? "Too cold. Make sure the heater is on and stuck to the side of the tank." : "Too hot. Get the tank out of sunlight or turn the heater down."}</div>`);
+    if (!humOk(r.hum)) out.push(`<div class="alert"><b>Humidity is ${r.hum}%</b>${r.hum < 70 ? "Too dry. Mist the substrate and coconut fiber and keep the lid on." : "Too wet. Crack the lid a little so mold doesn't grow."}</div>`);
+    if (hrs > 24) out.push(`<div class="note"><b>No reading in ${Math.floor(hrs / 24)} day${hrs >= 48 ? "s" : ""}</b>Check your gauge and log it in Tank.</div>`);
+  }
+  state.crabs.filter(x => x.molting).forEach(m => {
+    out.push(`<div class="note"><b>${esc(m.name)} is molting, day ${daysSince(m.moltStart || k) + 1}</b>Don't dig. Keep food and both waters topped up.</div>`);
+  });
+  $("alerts").innerHTML = out.join("");
+}
+
+function renderCrabs(){
+  const a = document.activeElement;
+  if (a && a.closest && a.closest("#crabList") && (a.tagName === "INPUT" || a.tagName === "TEXTAREA")) return; // don't interrupt typing
+  const ts = tankStats();
+  const bar = (label, v, color) => `<div class="stat"><span>${label}</span><div class="meter"><i style="width:${v}%;background:${color}"></i></div><span class="small" style="text-align:right">${v}</span></div>`;
+  $("crabList").innerHTML = state.crabs.map(c => {
+    const days = Math.max(0, daysSince(c.since));
+    const md = c.molting ? daysSince(c.moltStart || dayKey()) + 1 : 0;
+    const shellHist = c.shells.slice().reverse().map(s => `<li class="row between"><span>${esc(s.note || "New shell")}</span><span class="muted small">${fmtDay(s.day)}</span></li>`).join("");
+    const moltHist = c.molts.slice().reverse().map(m => `<li class="row between"><span>${fmtDay(m.start)} to ${fmtDay(m.end)}</span><span class="muted small">${Math.max(1, daysBetween(noon(m.start), noon(m.end)) + 1)} days</span></li>`).join("");
+    return `<div class="panel crab" style="--c:${esc(c.color)}">
+      <div class="crab-top">
+        <div class="avatar">${avatarFor(c)}</div>
+        <div class="grow">
+          <div class="crablv px">LV ${crabLevel(c)}</div>
+          <input class="namefield" value="${esc(c.name)}" data-name="${c.id}" aria-label="Crab name" maxlength="24">
+          <input class="shellfield" value="${esc(c.shell)}" data-shell="${c.id}" aria-label="Current shell" maxlength="30" placeholder="Describe the shell">
+          <div style="margin-top:4px">${c.molting ? `<span class="tag m">Molting · day ${md}</span>` : `<span class="tag">Active</span>`} <span class="tag s">Purple pincher</span></div>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        ${bar("Health", ts.hp, ts.hp >= 70 ? "var(--good)" : ts.hp >= 40 ? "var(--gold)" : "var(--bad)")}
+        ${bar("Fed", ts.fed, "var(--gold)")}
+        ${bar("Hydrated", ts.water, "var(--cyan)")}
+      </div>
+      <div style="margin-top:10px">${SKILLS.map(([k, label]) => {
+        const v = clamp(Number(c.skills[k]) || 5, 1, 10);
+        return `<div class="skill"><span>${label}</span><div class="pips" aria-label="${label} ${v} of 10">${Array.from({length:10}, (_, i) => `<span class="${i < v ? "on" : ""}"></span>`).join("")}</div>
+          <div class="pm"><button data-skill="${c.id}|${k}|-1" aria-label="Lower ${label}">−</button><button data-skill="${c.id}|${k}|1" aria-label="Raise ${label}">+</button></div></div>`;
+      }).join("")}</div>
+      <div class="traits" style="margin-top:10px">${TRAITS.map(t => `<button class="trait" data-trait="${c.id}|${t}" aria-pressed="${c.traits.includes(t)}">${t}</button>`).join("")}</div>
+      <div class="records"><div><b>${days}</b><span>days</span></div><div><b>${c.molts.length}</b><span>molts</span></div><div><b>${c.shells.length}</b><span>shells</span></div><div><b>${state.photos.filter(p => p.crab === c.id).length}</b><span>photos</span></div></div>
+      <div class="grid2" style="margin-top:10px">
+        <button class="btn" data-swap="${c.id}">Changed shell</button>
+        <button class="btn ${c.molting ? "gold" : "ghost"}" data-molt="${c.id}">${c.molting ? "Surfaced!" : "Started molting"}</button>
+      </div>
+      <details><summary>History, notes & settings</summary>
+        <h3 style="margin-top:8px">Shell history</h3><ul class="list small">${shellHist || `<li class="muted">No shell changes logged yet.</li>`}</ul>
+        <h3 style="margin-top:10px">Molts</h3><ul class="list small">${moltHist || `<li class="muted">No finished molts yet.</li>`}</ul>
+        <label class="f" for="notes-${c.id}" style="margin-top:10px">Notes</label>
+        <textarea id="notes-${c.id}" data-notes="${c.id}" placeholder="Personality, favorite foods, funny moments">${esc(c.notes)}</textarea>
+        <div class="grid2" style="margin-top:8px">
+          <div><label class="f" for="since-${c.id}">Got on</label><input type="date" id="since-${c.id}" data-since="${c.id}" value="${esc(c.since)}" max="${dayKey()}"></div>
+          <div><label class="f" for="color-${c.id}">Card color</label><select id="color-${c.id}" data-color="${c.id}">
+            ${[["#FF5A6E","Red"],["#3DDC84","Green"],["#4CC9F0","Blue"],["#FFC83D","Gold"],["#9B6BFF","Purple"],["#FF8A3D","Orange"]].map(([v,n]) => `<option value="${v}" ${v === c.color ? "selected" : ""}>${n}</option>`).join("")}
+          </select></div>
+        </div>
+        <button class="btn ghost small" data-delcrab="${c.id}" style="margin-top:10px">Remove ${esc(c.name)}</button>
+      </details>
+    </div>`;
+  }).join("") || `<p class="muted">No crabs yet.</p>`;
+
+  // photos
+  $("photoCount").textContent = state.photos.length ? `${state.photos.length} photo${state.photos.length === 1 ? "" : "s"}` : "";
+  $("photoBtns").innerHTML = assets ? state.crabs.map(c => `<button class="btn ghost small grow" data-photo="${c.id}" style="border-color:${esc(c.color)}">+ ${esc(c.name)}</button>`).join("") : "";
+  $("photoNote").hidden = !!assets;
+  $("photoNote").textContent = "Photos aren't available in this browser.";
+  $("gallery").innerHTML = state.photos.slice().reverse().map(p => {
+    const c = state.crabs.find(x => x.id === p.crab);
+    return `<button class="ph" data-view="${esc(p.id)}" style="--pc:${esc(c ? c.color : "var(--line)")}" aria-label="Photo of ${esc(c ? c.name : "crab")} from ${fmtDay(p.day)}">
+      <img src="${photoURL(p.id)}" alt="" loading="lazy"><span>${esc(c ? c.name : "?")} · ${fmtDay(p.day)}</span></button>`;
+  }).join("");
+}
+
+function chartSVG(vals, lo, hi, min, max, color){
+  if (vals.length < 2) return `<p class="muted small">Log two or more readings to see a chart.</p>`;
+  const W = 320, H = 110, p = 6;
+  const y = v => H - p - (clamp(v, min, max) - min) / (max - min) * (H - 2 * p);
+  const x = i => p + i * (W - 2 * p) / (vals.length - 1);
+  const pts = vals.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Last ${vals.length} readings">
+    <rect x="0" y="${y(hi)}" width="${W}" height="${y(lo) - y(hi)}" fill="${color}" opacity=".12"/>
+    <text x="${W - 6}" y="${y(hi) + 14}" text-anchor="end" font-size="11" fill="var(--muted)">target ${lo}–${hi}</text>
+    <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>
+    ${vals.map((v, i) => `<rect x="${(x(i) - 3.5).toFixed(1)}" y="${(y(v) - 3.5).toFixed(1)}" width="7" height="7" fill="${v < lo || v > hi ? "var(--bad)" : color}"/>`).join("")}</svg>`;
+}
+function renderTank(){
+  const r = latest();
+  $("nowReading").innerHTML = r ? `
+    <div><div class="big">${r.temp}<small>°F</small></div><span class="tag ${tempOk(r.temp) ? "" : "bad"}">${tempOk(r.temp) ? "Good" : r.temp < 75 ? "Too cold" : "Too hot"}</span></div>
+    <div><div class="big">${r.hum}<small>%</small></div><span class="tag ${humOk(r.hum) ? "" : "bad"}">${humOk(r.hum) ? "Good" : r.hum < 70 ? "Too dry" : "Too wet"}</span></div>
+    <div class="muted small" style="margin-left:auto;text-align:right">${fmtTime(r.t)}</div>` : `<p class="muted">No readings yet.</p>`;
+  const last = state.readings.slice(-14);
+  $("tempChart").innerHTML = chartSVG(last.map(x => x.temp), 75, 85, 65, 95, "var(--gold)");
+  $("humChart").innerHTML = chartSVG(last.map(x => x.hum), 70, 80, 40, 100, "var(--cyan)");
+  $("readingList").innerHTML = state.readings.slice(-8).reverse().map(x => `<li class="row between"><span>${x.temp}°F · ${x.hum}%</span>
+    <span class="row"><span class="muted small">${fmtTime(x.t)}</span><button class="btn ghost small" data-delreading="${x.t}" aria-label="Delete reading">✕</button></span></li>`).join("")
+    || `<li class="muted">Nothing logged yet.</li>`;
+  $("shopping").innerHTML = state.shopping.map(i => `<div class="row"><button class="quest grow" data-shop="${i.id}" aria-pressed="${!!i.done}" style="margin-bottom:6px">
+    <span class="box"></span><span class="grow">${esc(i.text)}</span></button><button class="btn ghost small" data-delshop="${i.id}" aria-label="Remove ${esc(i.text)}">✕</button></div>`).join("")
+    || `<p class="muted small">Nothing left to buy.</p>`;
+}
+function renderFood(){
+  const q = $("foodSearch").value.trim().toLowerCase();
+  const items = FOODS.filter(f => !q || f[0].toLowerCase().includes(q));
+  $("foodList").innerHTML = items.map(f => `<div class="food"><span>${esc(f[0])}</span><span class="tag ${f[1] === "no" ? "bad" : f[1] === "some" ? "s" : ""}">${FOOD_TXT[f[1]]}</span></div>`).join("")
+    || `<p class="muted small">Not on the list. Rule of thumb: plain, unseasoned, no preservatives. Or ask the expert.</p>`;
+  $("feedList").innerHTML = state.feedings.slice(-6).reverse().map(f => `<li class="row between"><span>${esc(f.food)}</span><span class="muted small">${fmtTime(f.t)}</span></li>`).join("");
+  const week = state.feedings.filter(f => Date.now() - f.t < 7 * 86400000);
+  const n = new Set(week.map(f => f.food.toLowerCase().trim())).size;
+  $("variety").textContent = week.length ? `${n} different meal${n === 1 ? "" : "s"} this week. Mix protein, fruit, veggies, and calcium.` : "Nothing logged this week yet.";
+}
+function renderTrophies(){
+  const list = trophyList(), got = list.filter(t => t[5]).length;
+  $("trophyCount").textContent = `${got} of ${list.length} unlocked`;
+  $("trophies").innerHTML = list.map(t => `<div class="trophy ${t[5] ? "got" : ""}"><div class="ic" aria-hidden="true">${t[1]}</div><b>${t[2]}</b><span>${t[3]}</span><span class="xp px">${t[5] ? "Unlocked" : "+" + t[4] + " XP"}</span></div>`).join("");
+}
+
+/* ---------- actions ---------- */
+function xpToast(before, msg){ const d = totalXP() - before; toast(d > 0 ? `+${d} XP · ${msg}` : msg); }
+const findCrab = id => state.crabs.find(x => x.id === id);
+
+document.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  const k = dayKey(), before = totalXP(), ds = b.dataset;
+  if (ds.daily) {
+    const c = state.checks[k] = state.checks[k] || {};
+    c[ds.daily] = !c[ds.daily]; save();
+    if (c[ds.daily]) xpToast(before, dayDone(k) ? "Perfect day!" : "Quest complete");
+  } else if (ds.weekly) {
+    const i = state.weeklyLog.findIndex(w => w.id === ds.weekly && w.day === k);
+    if (i >= 0) state.weeklyLog.splice(i, 1); else state.weeklyLog.push({id:ds.weekly, day:k});
+    save(); if (i < 0) xpToast(before, "Side quest done");
+  } else if (ds.shop) { const i = state.shopping.find(x => x.id === ds.shop); if (i) { i.done = !i.done; save(); } }
+  else if (ds.delshop) { state.shopping = state.shopping.filter(x => x.id !== ds.delshop); save(); }
+  else if (ds.delreading) { const t = Number(ds.delreading); state.readings = state.readings.filter(x => x.t !== t); save(); }
+  else if (ds.skill) {
+    const [id, sk, dv] = ds.skill.split("|"), c = findCrab(id);
+    if (c) { c.skills[sk] = clamp((Number(c.skills[sk]) || 5) + Number(dv), 1, 10); save(); }
+  } else if (ds.trait) {
+    const [id, t] = ds.trait.split("|"), c = findCrab(id);
+    if (c) { c.traits = c.traits.includes(t) ? c.traits.filter(x => x !== t) : c.traits.concat(t); save(); }
+  } else if (ds.swap) {
+    const c = findCrab(ds.swap); if (!c) return;
+    const note = prompt(`What does ${c.name}'s new shell look like?`, "");
+    if (note === null) return;
+    c.shells.push({day:k, note:note.trim().slice(0, 40)});
+    if (note.trim()) c.shell = note.trim().slice(0, 30);
+    save(); xpToast(before, `${c.name} moved into a new shell`);
+  } else if (ds.molt) {
+    const c = findCrab(ds.molt); if (!c) return;
+    if (c.molting) { c.molts.push({start:c.moltStart || k, end:k}); c.molting = false; c.moltStart = null; save(); xpToast(before, `Welcome back, ${c.name}!`); }
+    else { c.molting = true; c.moltStart = k; save(); toast(`${c.name} is molting. Don't dig!`); }
+  } else if (ds.delcrab) {
+    const c = findCrab(ds.delcrab);
+    if (c && confirm(`Remove ${c.name}? Their photos stay in the log.`)) { state.crabs = state.crabs.filter(x => x.id !== c.id); save(); }
+  } else if (ds.photo) { pickPhoto(ds.photo); }
+  else if (ds.view) { openViewer(ds.view); }
+  else if (ds.tab) { showTab(ds.tab); }
+});
+
+document.addEventListener("change", e => {
+  const t = e.target, ds = t.dataset;
+  const id = ds.name || ds.shell || ds.since || ds.notes || ds.color; if (!id) return;
+  const c = findCrab(id); if (!c) return;
+  if (ds.name) c.name = t.value.trim() || c.name;
+  if (ds.shell !== undefined) c.shell = t.value.trim();
+  if (ds.since && t.value) c.since = t.value;
+  if (ds.notes !== undefined) c.notes = t.value;
+  if (ds.color) c.color = t.value;
+  t.blur(); save();
+});
+// Enter in the name/shell fields commits
+document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.matches && e.target.matches(".namefield,.shellfield")) e.target.blur(); });
+
+$("saveReading").onclick = () => {
+  const temp = parseFloat($("inTemp").value), hum = parseFloat($("inHum").value);
+  if (!isFinite(temp) || temp < 40 || temp > 120) { toast("Enter a temp between 40 and 120°F"); $("inTemp").focus(); return; }
+  if (!isFinite(hum) || hum < 0 || hum > 100) { toast("Enter humidity from 0 to 100%"); $("inHum").focus(); return; }
+  const before = totalXP();
+  state.readings.push({t:Date.now(), temp:Math.round(temp * 10) / 10, hum:Math.round(hum)});
+  $("inTemp").value = ""; $("inHum").value = ""; save(); xpToast(before, "Reading saved");
+};
+function addShop(){ const v = $("shopIn").value.trim(); if (!v) return; state.shopping.push({id:uid(), text:v.slice(0, 60), done:false}); $("shopIn").value = ""; save(); }
+$("shopAdd").onclick = addShop;
+$("shopIn").addEventListener("keydown", e => { if (e.key === "Enter") addShop(); });
+function addFeed(){ const v = $("feedIn").value.trim(); if (!v) return; const before = totalXP(); state.feedings.push({t:Date.now(), food:v.slice(0, 80)}); $("feedIn").value = ""; save(); xpToast(before, "Feeding logged"); }
+$("feedAdd").onclick = addFeed;
+$("feedIn").addEventListener("keydown", e => { if (e.key === "Enter") addFeed(); });
+$("foodSearch").addEventListener("input", renderFood);
+$("addCrab").onclick = () => { state.crabs.push(newCrab("New crab", "", "#4CC9F0")); save(); toast("New crab recruited"); };
+$("luClose").onclick = () => $("levelup").classList.remove("show");
+
+/* ---------- photos ---------- */
+let photoCrab = null, viewing = null;
+function pickPhoto(crabId){ photoCrab = crabId; $("fileIn").value = ""; $("fileIn").click(); }
+function shrink(file){
+  // resize big phone photos to 1280px JPEG so uploads are fast
+  return new Promise(resolve => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      try {
+        const s = Math.min(1, 1280 / Math.max(img.naturalWidth, img.naturalHeight));
+        const cv = document.createElement("canvas");
+        cv.width = Math.max(1, Math.round(img.naturalWidth * s)); cv.height = Math.max(1, Math.round(img.naturalHeight * s));
+        cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+        cv.toBlob(b => { URL.revokeObjectURL(url); resolve(b || file); }, "image/jpeg", 0.85);
+      } catch(e){ URL.revokeObjectURL(url); resolve(file); }
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+}
+$("fileIn").addEventListener("change", async () => {
+  const f = $("fileIn").files && $("fileIn").files[0];
+  if (!f || !assets || !photoCrab) return;
+  const crab = findCrab(photoCrab); if (!crab) return;
+  toast("Uploading…");
+  try {
+    const blob = await shrink(f);
+    const type = blob.type && /^image\/(jpeg|png|gif|webp)$/.test(blob.type) ? blob.type : "image/jpeg";
+    const before = totalXP();
+    const res = await assets.upload(blob, {type});
+    state.photos.push({id:res.id, crab:crab.id, day:dayKey(), shell:crab.shell || ""});
+    save(); xpToast(before, `Photo of ${crab.name} saved`);
+  } catch(e){
+    const code = e && e.code;
+    toast((e && e.name === "QuotaExceededError") || code === "quota_exceeded" ? "Phone storage is full. Delete some old photos." : code === "unsupported_type" ? "That file type isn't supported. Try a JPG or PNG." : code === "too_large" ? "That photo is too big." : "Upload failed. Try again.");
+  }
+});
+function openViewer(id){
+  const p = state.photos.find(x => x.id === id); if (!p) return;
+  const c = findCrab(p.crab); viewing = id;
+  $("vImg").src = photoURL(id); $("vImg").alt = c ? c.name : "Crab photo";
+  $("vCap").textContent = `${c ? c.name : "Crab"} · ${fmtDay(p.day)}${p.shell ? " · " + p.shell : ""}`;
+  $("vDel").hidden = !assets; $("viewer").hidden = false; $("vClose").focus();
+}
+$("vClose").onclick = () => { $("viewer").hidden = true; viewing = null; };
+$("vDel").onclick = async () => {
+  if (!viewing || !confirm("Delete this photo?")) return;
+  const id = viewing;
+  state.photos = state.photos.filter(p => p.id !== id); $("viewer").hidden = true; viewing = null; save();
+  try { if (assets) await assets.delete(id); } catch(e){}
+};
+document.addEventListener("keydown", e => { if (e.key === "Escape") { $("viewer").hidden = true; $("levelup").classList.remove("show"); } });
+
+/* ---------- tabs ---------- */
+const TABS = [
+  ["quests","Quests",'<path d="M5 12l4 4 10-10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/>'],
+  ["crabs","Crabs",'<ellipse cx="12" cy="14" rx="7" ry="5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M8 9L6 4M16 9l2-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/>'],
+  ["tank","Tank",'<rect x="3" y="6" width="18" height="13" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M3 11h18" stroke="currentColor" stroke-width="2"/>'],
+  ["food","Food",'<circle cx="12" cy="13" r="7" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 6c0-2 1-3 3-3" fill="none" stroke="currentColor" stroke-width="2.2"/>'],
+  ["trophies","Trophies",'<path d="M7 4h10v5a5 5 0 01-10 0zM12 14v4M8 20h8M7 6H4v2a3 3 0 003 3M17 6h3v2a3 3 0 01-3 3" fill="none" stroke="currentColor" stroke-width="2"/>']
+];
+$("tabs").innerHTML = TABS.map(([id, label, icon]) => `<button role="tab" data-tab="${id}" aria-controls="tab-${id}" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true">${icon}</svg>${label}</button>`).join("");
+function showTab(id){
+  TABS.forEach(([t]) => { $("tab-" + t).hidden = t !== id; });
+  document.querySelectorAll("[data-tab]").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === id)));
+  window.scrollTo(0, 0);
+}
+
+/* ---------- backup ---------- */
+const toDataURL = blob => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(r.error); r.readAsDataURL(blob); });
+$("exportBtn").onclick = async () => {
+  try {
+    toast("Making backup…");
+    const photos = {};
+    for (const p of state.photos) { try { const v = await PDB.get(p.id); if (v && v.buf) photos[p.id] = await toDataURL(new Blob([v.buf], {type:v.type})); } catch(e){} }
+    const name = "crab-keeper-backup-" + dayKey() + ".json";
+    const file = new File([JSON.stringify({app:"crab-keeper", v:2, state, photos})], name, {type:"application/json"});
+    if (navigator.canShare && navigator.canShare({files:[file]})) {
+      try { await navigator.share({files:[file], title:"Crab Keeper backup"}); toast("Backup ready"); return; }
+      catch(e){ if (e && e.name === "AbortError") { toast("Backup cancelled"); return; } }
+    }
+    const a = document.createElement("a"); a.href = URL.createObjectURL(file); a.download = name;
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+    toast("Backup saved");
+  } catch(e){ toast("Backup failed. Try again."); }
+};
+$("importBtn").onclick = () => { $("importIn").value = ""; $("importIn").click(); };
+$("importIn").addEventListener("change", async () => {
+  const f = $("importIn").files && $("importIn").files[0]; if (!f) return;
+  try {
+    const data = JSON.parse(await f.text());
+    if (!data || data.app !== "crab-keeper" || !data.state) { toast("That isn't a Crab Keeper backup."); return; }
+    if (!confirm("Load this backup? It replaces what's on this phone now.")) return;
+    const photos = data.photos && typeof data.photos === "object" ? data.photos : {};
+    for (const id of Object.keys(photos)) {
+      try { const b = await (await fetch(photos[id])).blob(); await PDB.put(id, {buf:await b.arrayBuffer(), type:b.type || "image/jpeg"}); } catch(e){}
+    }
+    state = normalize(data.state);
+    try { localStorage.removeItem("crab-keeper-seen-level"); } catch(e){}
+    prevLevel = null; save(); await loadPhotoURLs(); toast("Backup loaded");
+  } catch(e){ toast("Couldn't read that file."); }
+});
+
+/* ---------- boot ---------- */
+assets = window.indexedDB ? localAssets : null;
+render(); showTab("quests"); setSync("Saved on this phone");
+loadPhotoURLs();
+try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch(e){}
+let lastDay = dayKey();
+setInterval(() => { if (dayKey() !== lastDay) { lastDay = dayKey(); render(); } }, 60000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) render(); });
+})();
+</script>
+</body>
+</html>
